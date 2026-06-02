@@ -38,17 +38,20 @@ window.addEventListener("DOMContentLoaded", () => {
         return;
       }
 
-      // 🔥 THIS IS YOUR DEBUG BLOCK (IMPORTANT)
       const data = docSnap.data();
 
-      console.log("FULL FIREBASE RAW DATA:", data);
+      console.log("RAW FIREBASE DATA:", data);
 
+      // SAFE DISPLAY (handles any mismatch)
       result.innerHTML = `
-        <pre>${JSON.stringify(data, null, 2)}</pre>
+        <h3>Status: ${data.Status || data.status || "N/A"}</h3>
+        <p><b>Location:</b> ${data.Location || data.location || "N/A"}</p>
+        <p><b>Destination:</b> ${data.Destination || data.destination || "N/A"}</p>
+        <p><b>ETA:</b> ${data.ETA || data.eta || "N/A"}</p>
       `;
 
     } catch (error) {
-      console.error("Firebase error:", error);
+      console.error(error);
       result.innerHTML = "Error loading shipment data";
     }
 
