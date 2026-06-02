@@ -2,7 +2,7 @@
 <html>
 <head>
   <meta charset="UTF-8">
-  <title>Shipment Tracking</title>
+  <title>Track Shipment</title>
 
   <style>
     body {
@@ -13,12 +13,11 @@
     }
 
     .container {
-      max-width: 520px;
+      max-width: 500px;
       margin: auto;
       background: white;
       padding: 20px;
       border-radius: 10px;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
     }
 
     input, button {
@@ -32,22 +31,16 @@
       background: #0b3d91;
       color: white;
       border: none;
-      cursor: pointer;
     }
 
     #map {
-      height: 280px;
-      margin-top: 20px;
-      border-radius: 10px;
+      height: 250px;
+      margin-top: 15px;
     }
   </style>
 
-  <!-- Map -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css">
   <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-
-  <!-- PDF Library -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
 </head>
 
@@ -55,10 +48,10 @@
 
 <div class="container">
 
-  <h2>📦 Shipment Tracking</h2>
+  <h2>📦 Customer Tracking</h2>
 
   <input id="trackingInput" placeholder="Enter Tracking Number">
-  <button id="trackBtn">Track Shipment</button>
+  <button id="trackBtn">Track</button>
 
   <div id="result"></div>
 
