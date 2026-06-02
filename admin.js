@@ -1,21 +1,17 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import {
-  getFirestore,
-  doc,
-  setDoc,
-  getDocs,
-  collection,
-  deleteDoc,
-  getDoc
+getFirestore,
+collection,
+getDocs,
+doc,
+setDoc,
+updateDoc
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyAwjcKxnViESMXyCzhML2sZPbA_HBzytMg",
-  authDomain: "diplomatic-courier-service.firebaseapp.com",
-  projectId: "diplomatic-courier-service",
-  storageBucket: "diplomatic-courier-service.firebasestorage.app",
-  messagingSenderId: "601909831194",
-  appId: "1:601909831194:web:d1d2edf11f4aa5871f53a3"
+apiKey: "YOUR_KEY",
+authDomain: "diplomatic-courier-service.firebaseapp.com",
+projectId: "diplomatic-courier-service"
 };
 
 const app = initializeApp(firebaseConfig);
@@ -26,137 +22,114 @@ const tracking = document.getElementById("tracking");
 const customerName = document.getElementById("customerName");
 const phone = document.getElementById("phone");
 const address = document.getElementById("address");
-const location = document.getElementById("location");
-const destination = document.getElementById("destination");
-const status = document.getElementById("status");
 const eta = document.getElementById("eta");
 const shippedDate = document.getElementById("shippedDate");
 
-const list = document.getElementById("list");
-
-let currentData = null;
-let currentId = null;
-
-// SAVE
+// SAVE SHIPMENT (FULL ROUTE INCLUDED)
 document.getElementById("saveBtn").addEventListener("click", async () => {
 
-  const id = tracking.value.trim();
-  if (!id) return alert("Enter tracking number");
+const id = tracking.value.trim();
+if(!id) return;
 
-  await setDoc(doc(db, "shipments", id), {
-    customerName: customerName.value,
-    phone: phone.value,
-    address: address.value,
-    location: location.value,
-    destination: destination.value,
-    status: status.value,
-    eta: eta.value,
-    shippedDate: shippedDate.value,
-    updatedAt: Date.now()
-  });
+await setDoc(doc(db,"shipments",id),{
 
-  loadShipments();
+customerName: customerName.value,
+phone: phone.value,
+address: address.value,
+
+status: "Order Confirmed",
+location: "Saudi Arabia",
+destination: "Nigeria",
+eta: eta.value,
+shippedDate: shippedDate.value,
+
+// 🌍 MULTI COUNTRY ROUTE ENGINE
+route: [
+  { name: "Saudi Arabia" },
+  { name: "Egypt" },
+  { name: "Nigeria" }
+],
+
+currentIndex: 0,
+progress: 0,
+
+updatedAt: Date.now()
+
 });
 
-// LOAD
-async function loadShipments() {
+loadDashboard();
 
-  const snap = await getDocs(collection(db, "shipments"));
+});
 
-  let html = "";
+// DASHBOARD
+async function loadDashboard(){
 
-  snap.forEach(d => {
+const snap = await getDocs(collection(db,"shipments"));
 
-    const data = d.data();
+let total=0, transit=0, delivered=0, pending=0;
+let html="";
 
-    html += `
-      <tr>
-        <td>${d.id}</td>
-        <td>${data.customerName || ""}</td>
-        <td>${data.phone || ""}</td>
-        <td>${data.status || ""}</td>
-        <td>${data.location || ""} → ${data.destination || ""}</td>
+snap.forEach(d=>{
 
-        <td>
+const x = d.data();
+total++;
 
-          <button class="edit" onclick="editShipment('${d.id}')">Edit</button>
+if(x.status==="In Transit") transit++;
+else if(x.status==="Delivered") delivered++;
+else pending++;
 
-          <button class="delete" onclick="deleteShipment('${d.id}')">Delete</button>
+html += `
+<tr>
+<td>${d.id}</td>
+<td>${x.customerName || ""}</td>
+<td>${x.status}</td>
+<td>${x.progress || 0}%</td>
+</tr>
+`;
 
-          <button class="pdf" onclick="downloadPDF('${d.id}')">PDF</button>
+});
 
-        </td>
-      </tr>
-    `;
-  });
+document.getElementById("total").innerText=total;
+document.getElementById("transit").innerText=transit;
+document.getElementById("delivered").innerText=delivered;
+document.getElementById("pending").innerText=pending;
 
-  list.innerHTML = html;
+document.getElementById("list").innerHTML=html;
+
 }
 
-// DELETE
-window.deleteShipment = async (id) => {
-  await deleteDoc(doc(db, "shipments", id));
-  loadShipments();
-};
+loadDashboard();
 
-// EDIT
-window.editShipment = async (id) => {
 
-  const snap = await getDoc(doc(db, "shipments", id));
-  const d = snap.data();
+// 🚚 GPS ENGINE (AUTO MOVE SHIPMENT)
+async function gpsEngine(){
 
-  tracking.value = id;
-  customerName.value = d.customerName;
-  phone.value = d.phone;
-  address.value = d.address;
-  location.value = d.location;
-  destination.value = d.destination;
-  status.value = d.status;
-  eta.value = d.eta;
-  shippedDate.value = d.shippedDate;
+const snap = await getDocs(collection(db,"shipments"));
 
-  loadMap();
-};
+snap.forEach(async (d)=>{
 
-// PDF
-window.downloadPDF = async (id) => {
+const data = d.data();
 
-  const snap = await getDoc(doc(db, "shipments", id));
-  const d = snap.data();
+if(!data.route) return;
 
-  const { jsPDF } = window.jspdf;
-  const docu = new jsPDF();
+let i = data.currentIndex || 0;
 
-  docu.text("SHIPPING RECEIPT", 20, 20);
-  docu.text(`Tracking: ${id}`, 20, 40);
-  docu.text(`Customer: ${d.customerName}`, 20, 50);
-  docu.text(`Phone: ${d.phone}`, 20, 60);
-  docu.text(`Status: ${d.status}`, 20, 70);
-  docu.text(`Route: ${d.location} → ${d.destination}`, 20, 80);
-  docu.text(`ETA: ${d.eta}`, 20, 90);
+if(i >= data.route.length-1) return;
 
-  docu.save(`${id}-receipt.pdf`);
-};
+i++;
 
-// MAP
-function loadMap() {
+await updateDoc(doc(db,"shipments",d.id),{
 
-  const map = L.map('map').setView([20, 0], 2);
+currentIndex:i,
+progress: Math.round((i/data.route.length)*100),
+location:data.route[i].name,
 
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    attribution: '© OpenStreetMap'
-  }).addTo(map);
+status: i === data.route.length-1 ? "Delivered" : "In Transit"
 
-  const route = [
-    [40.7128, -74.0060],
-    [51.5074, -0.1278],
-    [30.0444, 31.2357],
-    [6.5244, 3.3792]
-  ];
+});
 
-  L.polyline(route, { color: 'blue' }).addTo(map);
-  L.marker(route[0]).addTo(map);
+});
+
 }
 
-// INIT
-loadShipments();
+setInterval(gpsEngine,5000);
