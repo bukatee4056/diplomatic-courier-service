@@ -3,9 +3,9 @@ import {
   getFirestore,
   doc,
   setDoc,
-  deleteDoc,
-  collection,
-  getDocs
+  getDoc,
+  getDocs,
+  collection
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 import {
@@ -31,6 +31,7 @@ onAuthStateChanged(auth, (user) => {
   if (!user) window.location.href = "login.html";
 });
 
+// elements
 const tracking = document.getElementById("tracking");
 const status = document.getElementById("status");
 const location = document.getElementById("location");
@@ -40,67 +41,80 @@ const msg = document.getElementById("msg");
 
 const tableBody = document.getElementById("tableBody");
 
-// 💾 CREATE / UPDATE SHIPMENT
+let allData = [];
+
+// 💾 save shipment
 document.getElementById("saveBtn").addEventListener("click", async () => {
 
   const id = tracking.value.trim();
 
-  if (!id) {
-    msg.innerText = "Enter tracking number";
-    return;
-  }
-
   await setDoc(doc(db, "shipments", id), {
-    Status: status.value,
-    Location: location.value,
-    Destination: destination.value,
-    ETA: eta.value
+    status: status.value,
+    location: location.value,
+    destination: destination.value,
+    eta: eta.value,
+    createdAt: Date.now()
   });
 
-  msg.innerText = "Saved successfully ✔️";
-  loadShipments();
+  msg.innerText = "Saved ✔️";
+  loadData();
 });
 
-// 📡 LOAD ALL SHIPMENTS
-async function loadShipments() {
+// 📡 load all
+async function loadData() {
 
   tableBody.innerHTML = "";
 
   const snap = await getDocs(collection(db, "shipments"));
 
-  snap.forEach(docSnap => {
-    const data = docSnap.data();
+  let total = 0, transit = 0, delivered = 0;
+
+  snap.forEach(d => {
+    const data = d.data();
+    total++;
+
+    if (data.status === "In Transit") transit++;
+    if (data.status === "Delivered") delivered++;
 
     tableBody.innerHTML += `
       <tr>
-        <td>${docSnap.id}</td>
-        <td>${data.Status}</td>
-        <td>${data.Location}</td>
-        <td>${data.Destination}</td>
-        <td>${data.ETA}</td>
-        <td>
-          <button onclick="editShipment('${docSnap.id}', '${data.Status}', '${data.Location}', '${data.Destination}', '${data.ETA}')">Edit</button>
-          <button onclick="deleteShipment('${docSnap.id}')">Delete</button>
-        </td>
+        <td>${d.id}</td>
+        <td>${data.status}</td>
+        <td>${data.location}</td>
+        <td>${data.destination}</td>
+        <td>${data.eta}</td>
       </tr>
     `;
   });
+
+  document.getElementById("total").innerText = total;
+  document.getElementById("transit").innerText = transit;
+  document.getElementById("delivered").innerText = delivered;
 }
 
-// 🗑 DELETE
-window.deleteShipment = async (id) => {
-  await deleteDoc(doc(db, "shipments", id));
-  loadShipments();
-};
+// 🔍 search
+document.getElementById("searchBtn").addEventListener("click", async () => {
 
-// ✏️ EDIT
-window.editShipment = (id, s, l, d, e) => {
-  tracking.value = id;
-  status.value = s;
-  location.value = l;
-  destination.value = d;
-  eta.value = e;
-};
+  const id = document.getElementById("search").value.trim();
 
-// initial load
-loadShipments();
+  const snap = await getDoc(doc(db, "shipments", id));
+
+  if (!snap.exists()) {
+    msg.innerText = "Not found";
+    return;
+  }
+
+  const d = snap.data();
+
+  tableBody.innerHTML = `
+    <tr>
+      <td>${id}</td>
+      <td>${d.status}</td>
+      <td>${d.location}</td>
+      <td>${d.destination}</td>
+      <td>${d.eta}</td>
+    </tr>
+  `;
+});
+
+loadData();
