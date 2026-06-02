@@ -40,12 +40,11 @@ button.addEventListener("click", async function () {
   <p><strong>Location:</strong> ${data.Location}</p>
   <p><strong>Destination:</strong> ${data.Destination}</p>
   <p><strong>ETA:</strong> ${data.ETA}</p>
-`;
+
       `;
     } else {
       result.innerHTML = "Tracking number not found.";
     }
 
   });
-
 });
