@@ -18,11 +18,9 @@ window.addEventListener("load", function () {
   const button = document.querySelector("button");
   const result = document.getElementById("result");
 
-button.addEventListener("click", async function () {
+  button.addEventListener("click", async function () {
 
-  alert("Button clicked");
-
-  const trackingNumber = document.querySelector("input").value.trim();
+    const trackingNumber = document.querySelector("input").value.trim();
 
     if (!trackingNumber) {
       result.innerHTML = "Please enter a tracking number.";
@@ -32,22 +30,19 @@ button.addEventListener("click", async function () {
     const docRef = doc(db, "shipments", trackingNumber);
     const docSnap = await getDoc(docRef);
 
-if (docSnap.exists()) {
-  const data = docSnap.data();
+    if (docSnap.exists()) {
+      const data = docSnap.data();
 
-  result.innerHTML = `
-    <h3>Status: ${data.Status}</h3>
-    <p><strong>Location:</strong> ${data.Location}</p>
-    <p><strong>Destination:</strong> ${data.Destination}</p>
-    <p><strong>ETA:</strong> ${data.ETA}</p>;
-} else {
-  result.innerHTML = "Tracking number not found.";
-}
-
+      result.innerHTML = `
+        <h3>Status: ${data.status}</h3>
+        <p><strong>Location:</strong> ${data.location}</p>
+        <p><strong>Destination:</strong> ${data.destination}</p>
+        <p><strong>ETA:</strong> ${data.eta}</p>
       `;
     } else {
       result.innerHTML = "Tracking number not found.";
     }
 
   });
+
 });
