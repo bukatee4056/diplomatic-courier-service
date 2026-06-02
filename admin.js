@@ -1,135 +1,120 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import {
-getFirestore,
-collection,
-getDocs,
-doc,
-setDoc,
-updateDoc
+  getFirestore,
+  collection,
+  getDocs,
+  doc,
+  updateDoc,
+  deleteDoc
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-const firebaseConfig = {
-apiKey: "YOUR_KEY",
-authDomain: "diplomatic-courier-service.firebaseapp.com",
-projectId: "diplomatic-courier-service"
-};
+const app = initializeApp({
+  apiKey: "YOUR_KEY",
+  authDomain: "diplomatic-courier-service.firebaseapp.com",
+  projectId: "diplomatic-courier-service"
+});
 
-const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-// INPUTS
-const tracking = document.getElementById("tracking");
-const customerName = document.getElementById("customerName");
-const phone = document.getElementById("phone");
-const address = document.getElementById("address");
-const eta = document.getElementById("eta");
-const shippedDate = document.getElementById("shippedDate");
+const list = document.getElementById("list");
 
-// SAVE SHIPMENT (FULL ROUTE INCLUDED)
-document.getElementById("saveBtn").addEventListener("click", async () => {
+// LOAD SHIPMENTS
+async function load() {
 
-const id = tracking.value.trim();
-if(!id) return;
+  const snap = await getDocs(collection(db, "shipments"));
+  list.innerHTML = "";
 
-await setDoc(doc(db,"shipments",id),{
+  snap.forEach(docSnap => {
 
-customerName: customerName.value,
-phone: phone.value,
-address: address.value,
+    const d = docSnap.data();
+    const id = docSnap.id;
 
-status: "Order Confirmed",
-location: "Saudi Arabia",
-destination: "Nigeria",
-eta: eta.value,
-shippedDate: shippedDate.value,
+    list.innerHTML += `
+    <div class="card">
 
-// 🌍 MULTI COUNTRY ROUTE ENGINE
-route: [
-  { name: "Saudi Arabia" },
-  { name: "Egypt" },
-  { name: "Nigeria" }
-],
+      <h3>${id}</h3>
 
-currentIndex: 0,
-progress: 0,
+      <div class="grid">
 
-updatedAt: Date.now()
+        <div>
+          <div class="small">Customer</div>
+          <input id="c-${id}" value="${d.customerName || ""}">
+        </div>
 
-});
+        <div>
+          <div class="small">Phone</div>
+          <input id="p-${id}" value="${d.phone || ""}">
+        </div>
 
-loadDashboard();
+        <div>
+          <div class="small">Location</div>
+          <input id="l-${id}" value="${d.location || ""}">
+        </div>
 
-});
+        <div>
+          <div class="small">Destination</div>
+          <input id="d-${id}" value="${d.destination || ""}">
+        </div>
 
-// DASHBOARD
-async function loadDashboard(){
+        <div>
+          <div class="small">Status</div>
+          <input id="s-${id}" value="${d.status || ""}">
+        </div>
 
-const snap = await getDocs(collection(db,"shipments"));
+        <div>
+          <div class="small">ETA</div>
+          <input id="e-${id}" value="${d.eta || ""}">
+        </div>
 
-let total=0, transit=0, delivered=0, pending=0;
-let html="";
+        <div>
+          <div class="small">Shipped Date</div>
+          <input id="sd-${id}" value="${d.shippedDate || ""}">
+        </div>
 
-snap.forEach(d=>{
+        <div>
+          <div class="small">Route (comma separated)</div>
+          <input id="r-${id}" value="${(d.route || []).join(",")}">
+        </div>
 
-const x = d.data();
-total++;
+      </div>
 
-if(x.status==="In Transit") transit++;
-else if(x.status==="Delivered") delivered++;
-else pending++;
+      <button class="update" onclick="update('${id}')">✏ Update</button>
+      <button class="delete" onclick="removeDoc('${id}')">🗑 Delete</button>
 
-html += `
-<tr>
-<td>${d.id}</td>
-<td>${x.customerName || ""}</td>
-<td>${x.status}</td>
-<td>${x.progress || 0}%</td>
-</tr>
-`;
-
-});
-
-document.getElementById("total").innerText=total;
-document.getElementById("transit").innerText=transit;
-document.getElementById("delivered").innerText=delivered;
-document.getElementById("pending").innerText=pending;
-
-document.getElementById("list").innerHTML=html;
-
+    </div>
+    `;
+  });
 }
 
-loadDashboard();
+// UPDATE
+window.update = async (id) => {
 
+  await updateDoc(doc(db, "shipments", id), {
 
-// 🚚 GPS ENGINE (AUTO MOVE SHIPMENT)
-async function gpsEngine(){
+    customerName: document.getElementById("c-"+id).value,
+    phone: document.getElementById("p-"+id).value,
+    location: document.getElementById("l-"+id).value,
+    destination: document.getElementById("d-"+id).value,
+    status: document.getElementById("s-"+id).value,
+    eta: document.getElementById("e-"+id).value,
+    shippedDate: document.getElementById("sd-"+id).value,
 
-const snap = await getDocs(collection(db,"shipments"));
+    route: document.getElementById("r-"+id).value.split(","),
 
-snap.forEach(async (d)=>{
+    updatedAt: Date.now()
+  });
 
-const data = d.data();
+  alert("Updated ✔");
+};
 
-if(!data.route) return;
+// DELETE
+window.removeDoc = async (id) => {
 
-let i = data.currentIndex || 0;
+  if(confirm("Delete shipment?")){
+    await deleteDoc(doc(db,"shipments",id));
+    alert("Deleted ✔");
+    load();
+  }
+};
 
-if(i >= data.route.length-1) return;
-
-i++;
-
-await updateDoc(doc(db,"shipments",d.id),{
-
-currentIndex:i,
-progress: Math.round((i/data.route.length)*100),
-location:data.route[i].name,
-
-status: i === data.route.length-1 ? "Delivered" : "In Transit"
-
-});
-
-});
-
-}
-
-setInterval(gpsEngine,5000);
+load();
