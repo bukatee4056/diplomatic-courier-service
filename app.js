@@ -44,16 +44,18 @@ window.addEventListener("DOMContentLoaded", () => {
         return;
       }
 
-      const data = docSnap.data();
+const data = docSnap.data();
 
-      console.log("DATA:", data);
+function getField(obj, key) {
+  return obj[key] || obj[key.toLowerCase()] || obj[key.toUpperCase()] || "N/A";
+}
 
-      result.innerHTML = `
-        <h3>Status: ${data.Status}</h3>
-        <p><b>Location:</b> ${data.Location}</p>
-        <p><b>Destination:</b> ${data.Destination}</p>
-        <p><b>ETA:</b> ${data.ETA}</p>
-      `;
+result.innerHTML = `
+  <h3>Status: ${getField(data, "Status")}</h3>
+  <p><b>Location:</b> ${getField(data, "Location")}</p>
+  <p><b>Destination:</b> ${getField(data, "Destination")}</p>
+  <p><b>ETA:</b> ${getField(data, "ETA")}</p>
+`;
 
     } catch (err) {
       console.log("ERROR:", err);
