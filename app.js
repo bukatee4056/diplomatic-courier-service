@@ -25,15 +25,21 @@ window.addEventListener("DOMContentLoaded", () => {
     return;
   }
 
-  button.addEventListener("click", async () => {
-    console.log("Clicked");
+button.addEventListener("click", async () => {
 
-    const trackingNumber = input.value.trim();
+  const trackingNumber = input.value.trim();
 
-    if (!trackingNumber) {
-      result.innerHTML = "Enter tracking number";
-      return;
-    }
+  const docRef = doc(db, "shipments", trackingNumber);
+  const docSnap = await getDoc(docRef);
+
+  if (docSnap.exists()) {
+    console.log("RAW FIREBASE DATA:", docSnap.data());
+    result.innerHTML = "Check console for data";
+  } else {
+    result.innerHTML = "Not found";
+  }
+
+});
 
     try {
       const docRef = doc(db, "shipments", trackingNumber);
