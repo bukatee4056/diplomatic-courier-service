@@ -1,17 +1,22 @@
-window.onload = function () {
+window.addEventListener("DOMContentLoaded", () => {
 
   const button = document.querySelector("button");
   const input = document.querySelector("input");
   const result = document.getElementById("result");
 
-  alert("JS LOADED");
+  console.log("DOM READY");
 
-  button.onclick = function () {
+  if (!button || !input || !result) {
+    console.log("Missing elements:", { button, input, result });
+    return;
+  }
 
-    alert("BUTTON CLICKED");
+  button.addEventListener("click", () => {
 
-    result.innerHTML = "Button works. Input: " + input.value;
+    console.log("BUTTON WORKING");
 
-  };
+    result.innerHTML = "Button works: " + input.value;
 
-};
+  });
+
+});
