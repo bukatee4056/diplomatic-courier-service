@@ -34,12 +34,11 @@ window.addEventListener("DOMContentLoaded", () => {
       const data = docSnap.data();
       console.log("DATA FROM FIREBASE:", data);
 
-      result.innerHTML = `
-        <h3>Status: ${data.Status}</h3>
-        <p><b>Location:</b> ${data.Location}</p>
-        <p><b>Destination:</b> ${data.Destination}</p>
-        <p><b>ETA:</b> ${data.ETA}</p>
-      `;
+const data = docSnap.data();
+
+console.log("FIREBASE RAW DATA:", data);
+
+result.innerHTML = JSON.stringify(data);
 
     } else {
       result.innerHTML = "Tracking number not found";
