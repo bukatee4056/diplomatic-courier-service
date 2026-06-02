@@ -7,43 +7,83 @@
   <style>
     body {
       font-family: Arial;
-      background: #f4f6fb;
+      background: #eef2f7;
+      margin: 0;
       padding: 20px;
-      text-align: center;
     }
 
     .container {
-      max-width: 650px;
+      max-width: 1000px;
       margin: auto;
       background: white;
       padding: 20px;
       border-radius: 10px;
     }
 
+    h2 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .form {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
     input {
-      width: 100%;
       padding: 10px;
-      margin-top: 8px;
-      border-radius: 6px;
       border: 1px solid #ccc;
+      border-radius: 6px;
     }
 
     button {
-      width: 100%;
-      padding: 10px;
-      margin-top: 10px;
+      grid-column: span 3;
+      padding: 12px;
       background: #0b3d91;
       color: white;
       border: none;
       border-radius: 6px;
+      cursor: pointer;
     }
 
-    .card {
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+
+    th, td {
       border: 1px solid #ddd;
       padding: 10px;
-      margin-top: 10px;
-      border-radius: 8px;
       text-align: left;
+      font-size: 14px;
+    }
+
+    th {
+      background: #0b3d91;
+      color: white;
+    }
+
+    .actions button {
+      padding: 5px 8px;
+      margin-right: 5px;
+      font-size: 12px;
+    }
+
+    .delete {
+      background: red;
+      color: white;
+      border: none;
+      border-radius: 4px;
+    }
+
+    .edit {
+      background: green;
+      color: white;
+      border: none;
+      border-radius: 4px;
     }
   </style>
 </head>
@@ -52,27 +92,42 @@
 
 <div class="container">
 
-  <h2>👨‍💼 Admin Dashboard</h2>
+  <h2>📦 Admin Dashboard</h2>
 
-  <input id="tracking" placeholder="Tracking Number">
-  <input id="status" placeholder="Status">
-  <input id="location" placeholder="Location">
-  <input id="destination" placeholder="Destination">
-  <input id="eta" placeholder="ETA">
-  <input id="shippedDate" placeholder="Shipped Date">
+  <div class="form">
 
-  <input id="customerName" placeholder="Customer Name">
-  <input id="phone" placeholder="Phone Number">
-  <input id="address" placeholder="House Address">
+    <input id="tracking" placeholder="Tracking Number">
+    <input id="customerName" placeholder="Customer Name">
+    <input id="phone" placeholder="Phone Number">
 
-  <button id="saveBtn">Save Shipment</button>
+    <input id="address" placeholder="House Address">
+    <input id="location" placeholder="Current Location">
+    <input id="destination" placeholder="Destination">
 
-  <p id="msg"></p>
+    <input id="status" placeholder="Status">
+    <input id="eta" placeholder="ETA">
+    <input id="shippedDate" placeholder="Shipped Date">
 
-  <hr>
+    <button id="saveBtn">Save Shipment</button>
 
-  <h3>📦 Shipments</h3>
-  <div id="list"></div>
+  </div>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Tracking</th>
+        <th>Customer</th>
+        <th>Phone</th>
+        <th>Location</th>
+        <th>Destination</th>
+        <th>Status</th>
+        <th>ETA</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+
+    <tbody id="list"></tbody>
+  </table>
 
 </div>
 
