@@ -13,38 +13,51 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-window.addEventListener("load", function () {
+window.addEventListener("DOMContentLoaded", () => {
+  console.log("Page loaded");
 
   const button = document.querySelector("button");
+  const input = document.querySelector("input");
   const result = document.getElementById("result");
 
-  button.addEventListener("click", async function () {
+  if (!button || !input || !result) {
+    console.log("Missing elements");
+    return;
+  }
 
-    const trackingNumber = document.querySelector("input").value.trim();
+  button.addEventListener("click", async () => {
+    console.log("Clicked");
+
+    const trackingNumber = input.value.trim();
 
     if (!trackingNumber) {
-      result.innerHTML = "Please enter a tracking number.";
+      result.innerHTML = "Enter tracking number";
       return;
     }
 
-    const docRef = doc(db, "shipments", trackingNumber);
-    const docSnap = await getDoc(docRef);
+    try {
+      const docRef = doc(db, "shipments", trackingNumber);
+      const docSnap = await getDoc(docRef);
 
-if (docSnap.exists()) {
-  const data = docSnap.data();
+      if (!docSnap.exists()) {
+        result.innerHTML = "Tracking number not found";
+        return;
+      }
 
-const data = docSnap.data();
+      const data = docSnap.data();
 
-result.innerHTML = `
-  <h3>Status: ${data.Status || data.status}</h3>
-  <p><strong>Location:</strong> ${data.Location || data.location}</p>
-  <p><strong>Destination:</strong> ${data.Destination || data.destination}</p>
-  <p><strong>ETA:</strong> ${data.ETA || data.eta}</p>
-`;
-} else {
-  result.innerHTML = "Tracking number not found.";
-}
+      console.log("DATA:", data);
 
+      result.innerHTML = `
+        <h3>Status: ${data.Status}</h3>
+        <p><b>Location:</b> ${data.Location}</p>
+        <p><b>Destination:</b> ${data.Destination}</p>
+        <p><b>ETA:</b> ${data.ETA}</p>
+      `;
+
+    } catch (err) {
+      console.log("ERROR:", err);
+      result.innerHTML = "Something went wrong. Check console.";
+    }
   });
-
 });
