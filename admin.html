@@ -4,28 +4,37 @@
 <meta charset="UTF-8">
 <title>Logistics Control Center</title>
 
+<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css">
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
 <style>
 body{
+  margin:0;
   font-family:Arial;
   background:#0b1220;
   color:white;
-  margin:0;
+}
+
+.header{
+  background:#111a2e;
+  padding:15px;
+  text-align:center;
 }
 
 .container{
-  max-width:1000px;
-  margin:auto;
-  padding:20px;
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:15px;
+  padding:15px;
 }
 
 .card{
   background:#111a2e;
   padding:15px;
-  margin:10px 0;
   border-radius:12px;
 }
 
-input, button{
+input,button{
   width:100%;
   padding:10px;
   margin-top:8px;
@@ -38,34 +47,220 @@ button{
   font-weight:bold;
 }
 
-.edit{background:#22c55e;color:white}
-.delete{background:#ef4444;color:white}
+.create{background:#22c55e;color:white}
 .update{background:#3b82f6;color:white}
+.delete{background:#ef4444;color:white}
 
-.grid{
-  display:grid;
-  grid-template-columns:repeat(2,1fr);
-  gap:10px;
+.shipment{
+  background:#0f172a;
+  padding:10px;
+  margin-bottom:10px;
+  border-radius:10px;
 }
 
-.small{
-  font-size:12px;
-  color:#9aa4b2;
+#map{
+  height:250px;
+  margin-top:10px;
+  border-radius:10px;
 }
 </style>
 </head>
 
 <body>
 
+<div class="header">
+<h2>📦 Logistics Control Center</h2>
+</div>
+
 <div class="container">
 
-<h2>📦 Logistics Control Center</h2>
+<!-- CREATE -->
+<div class="card">
+<h3>➕ Create Shipment</h3>
 
+<input id="id" placeholder="Tracking ID">
+<input id="customer" placeholder="Customer Name">
+<input id="phone" placeholder="Phone">
+<input id="location" placeholder="Location">
+<input id="destination" placeholder="Destination">
+<input id="address" placeholder="Address">
+<input id="status" placeholder="Status">
+<input id="eta" placeholder="ETA">
+<input id="shipped" placeholder="Shipped Date">
+<input id="route" placeholder="Route (comma separated)">
+
+<button class="create" onclick="createShipment()">Create</button>
+
+<div id="map"></div>
+</div>
+
+<!-- LIST -->
+<div class="card">
+<h3>📦 Shipments</h3>
 <div id="list"></div>
+</div>
 
 </div>
 
-<script type="module" src="admin.js"></script>
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import {
+getFirestore,
+collection,
+doc,
+setDoc,
+getDocs,
+updateDoc,
+deleteDoc,
+getDoc
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const app = initializeApp({
+apiKey: "AIzaSyAwjcKxnViESMXyCzhML2sZPbA_HBzytMg",
+authDomain: "diplomatic-courier-service.firebaseapp.com",
+projectId: "diplomatic-courier-service"
+});
+
+const db = getFirestore(app);
+
+// ROUTE MAP
+const geo = {
+"yemen":[15.3694,44.1910],
+"saudi arabia":[24.7136,46.6753],
+"jordan":[31.9632,35.9304],
+"sudan":[15.5007,32.5599],
+"egypt":[30.0444,31.2357],
+"nigeria":[6.5244,3.3792],
+"ethiopia":[9.1450,40.4897]
+};
+
+// MAP
+let map;
+let marker;
+let polyline;
+
+function drawMap(routeNames){
+
+if(map) map.remove();
+
+const coords = routeNames.map(c => geo[c.toLowerCase()] || [0,0]);
+
+map = L.map("map").setView(coords[0],3);
+
+L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png").addTo(map);
+
+polyline = L.polyline(coords,{color:"cyan"}).addTo(map);
+
+marker = L.marker(coords[0]).addTo(map);
+
+map.fitBounds(polyline.getBounds());
+}
+
+// CREATE
+window.createShipment = async () => {
+
+const id = document.getElementById("id").value;
+
+const routeArr = document.getElementById("route").value.split(",");
+
+await setDoc(doc(db,"shipments",id),{
+customerName: customer.value,
+phone: phone.value,
+location: location.value,
+destination: destination.value,
+address: address.value,
+status: status.value,
+eta: eta.value,
+shippedDate: shipped.value,
+route: routeArr,
+updatedAt: Date.now()
+});
+
+alert("Created ✔");
+load();
+};
+
+// LOAD
+async function load(){
+
+const snap = await getDocs(collection(db,"shipments"));
+
+list.innerHTML="";
+
+snap.forEach(d=>{
+
+const data = d.data();
+
+list.innerHTML += `
+<div class="shipment">
+
+<h4>${d.id}</h4>
+
+<input id="c-${d.id}" value="${data.customerName||""}">
+<input id="p-${d.id}" value="${data.phone||""}">
+<input id="l-${d.id}" value="${data.location||""}">
+<input id="d-${d.id}" value="${data.destination||""}">
+<input id="a-${d.id}" value="${data.address||""}">
+<input id="s-${d.id}" value="${data.status||""}">
+<input id="e-${d.id}" value="${data.eta||""}">
+<input id="sd-${d.id}" value="${data.shippedDate||""}">
+<input id="r-${d.id}" value="${(data.route||[]).join(",")}">
+
+<button class="update" onclick="update('${d.id}')">✏ Update</button>
+<button class="delete" onclick="removeItem('${d.id}')">🗑 Delete</button>
+
+<button onclick='preview("${d.id}")'>🗺 View Route</button>
+
+</div>
+`;
+});
+
+}
+
+// UPDATE
+window.update = async (id) => {
+
+await updateDoc(doc(db,"shipments",id),{
+customerName: document.getElementById("c-"+id).value,
+phone: document.getElementById("p-"+id).value,
+location: document.getElementById("l-"+id).value,
+destination: document.getElementById("d-"+id).value,
+address: document.getElementById("a-"+id).value,
+status: document.getElementById("s-"+id).value,
+eta: document.getElementById("e-"+id).value,
+shippedDate: document.getElementById("sd-"+id).value,
+route: document.getElementById("r-"+id).value.split(","),
+updatedAt: Date.now()
+});
+
+alert("Updated ✔");
+load();
+};
+
+// DELETE
+window.removeItem = async (id) => {
+
+if(confirm("Delete shipment?")){
+await deleteDoc(doc(db,"shipments",id));
+load();
+}
+};
+
+// PREVIEW MAP
+window.preview = async (id) => {
+
+const snap = await getDoc(doc(db,"shipments",id));
+const data = snap.data();
+
+if(data.route){
+drawMap(data.route);
+}
+};
+
+load();
+
+</script>
 
 </body>
 </html>
