@@ -15,11 +15,11 @@ const db = getFirestore(app);
 
 window.addEventListener("DOMContentLoaded", () => {
 
-  const button = document.getElementById("trackBtn");
+  const btn = document.getElementById("trackBtn");
   const input = document.getElementById("trackingInput");
   const result = document.getElementById("result");
 
-  button.addEventListener("click", async () => {
+  btn.addEventListener("click", async () => {
 
     const id = input.value.trim();
 
@@ -28,34 +28,48 @@ window.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
-    const docRef = doc(db, "shipments", id);
-    const docSnap = await getDoc(docRef);
+    const snap = await getDoc(doc(db, "shipments", id));
 
-    if (!docSnap.exists()) {
-      result.innerHTML = "❌ Tracking number not found";
+    if (!snap.exists()) {
+      result.innerHTML = `
+        <div style="padding:15px;background:#ffeded;color:#c00;border-radius:10px;">
+          ❌ Tracking number not found
+        </div>
+      `;
       return;
     }
 
-    const data = docSnap.data();
+    const data = snap.data();
 
     result.innerHTML = `
-      <div style="padding:15px;border:1px solid #ddd;border-radius:10px;background:#fff;">
+      <div style="max-width:500px;margin:auto;padding:20px;border-radius:12px;background:#0b1220;color:white;font-family:Arial;">
 
-        <h3>📦 Status: ${data.status}</h3>
+        <h2>📦 Shipment Tracking</h2>
 
-        <p>📍 <b>Location:</b> ${data.location}</p>
+        <div style="padding:10px;background:#111a2e;border-radius:10px;margin-top:10px;">
+          <h3>📦 ${id}</h3>
+          <p>📍 <b>Location:</b> ${data.location}</p>
+          <p>🎯 <b>Destination:</b> ${data.destination}</p>
+          <p>⏰ <b>ETA:</b> ${data.eta}</p>
+        </div>
 
-        <p>🎯 <b>Destination:</b> ${data.destination}</p>
+        <div style="margin-top:15px;">
+          <h3>🚚 Route Timeline</h3>
+          <ul style="list-style:none;padding:0;">
+            ${(data.route || []).map((r, i) => `
+              <li style="padding:8px;margin:5px 0;background:#111a2e;border-radius:8px;">
+                ${i === (data.route?.length - 1) ? "📍 CURRENT → " : "📦 "} ${r}
+              </li>
+            `).join("")}
+          </ul>
+        </div>
 
-        <p>⏰ <b>ETA:</b> ${data.eta}</p>
-
-        <hr>
-
-        <h4>🚚 Route Timeline</h4>
-
-        <ul>
-          ${(data.route || []).map(r => `<li>📍 ${r}</li>`).join("")}
-        </ul>
+        <div style="margin-top:15px;">
+          <h3>📊 Status</h3>
+          <div style="padding:10px;border-radius:10px;background:#1b2a4a;">
+            ${data.status}
+          </div>
+        </div>
 
       </div>
     `;
