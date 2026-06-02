@@ -13,11 +13,6 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-let currentData = null;
-let currentId = null;
-let map;
-let marker;
-
 window.addEventListener("DOMContentLoaded", () => {
 
   const btn = document.getElementById("trackBtn");
@@ -42,95 +37,23 @@ window.addEventListener("DOMContentLoaded", () => {
 
     const data = snap.data();
 
-    currentData = data;
-    currentId = id;
-
     result.innerHTML = `
-      <div class="card">
+      <div style="text-align:left;border:1px solid #ddd;padding:10px;border-radius:8px">
 
-        <h3>📦 Tracking: ${id}</h3>
+        <h3>📦 ${id}</h3>
 
-        <p>📍 Location: ${data.location}</p>
-        <p>🎯 Destination: ${data.destination}</p>
-        <p>📅 Shipped Date: ${data.shippedDate || "N/A"}</p>
-        <p>⏰ ETA: ${data.eta}</p>
-        <p class="status">📦 Status: ${data.status}</p>
+        👤 Customer: ${data.customerName || "N/A"}<br>
+        📞 Phone: ${data.phone || "N/A"}<br>
+        🏠 Address: ${data.address || "N/A"}<br><br>
 
-        <hr>
-
-        <h4>🚚 Route Timeline</h4>
-
-        <ul>
-          ${(data.route || []).map(r => `<li>📍 ${r}</li>`).join("")}
-        </ul>
-
-        <button onclick="downloadPDF()">Download Receipt</button>
+        📍 ${data.location}<br>
+        🎯 ${data.destination}<br>
+        📦 ${data.status}<br>
+        📅 Shipped: ${data.shippedDate || "N/A"}<br>
+        ⏰ ETA: ${data.eta}
 
       </div>
     `;
-
-    loadMap();
-
   });
 
 });
-
-// ---------------- MAP ----------------
-function loadMap() {
-
-  if (!map) {
-    map = L.map('map').setView([20, 0], 2);
-
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '© OpenStreetMap'
-    }).addTo(map);
-  }
-
-  map.eachLayer(layer => {
-    if (layer instanceof L.Marker || layer instanceof L.Polyline) {
-      map.removeLayer(layer);
-    }
-  });
-
-  const coords = [
-    [40.7128, -74.0060],
-    [51.5074, -0.1278],
-    [30.0444, 31.2357],
-    [6.5244, 3.3792]
-  ];
-
-  L.polyline(coords, { color: 'blue' }).addTo(map);
-
-  marker = L.marker(coords[0]).addTo(map);
-
-  let i = 0;
-
-  setInterval(() => {
-    if (i < coords.length) {
-      marker.setLatLng(coords[i]);
-      map.panTo(coords[i]);
-      i++;
-    }
-  }, 2000);
-}
-
-// ---------------- PDF RECEIPT ----------------
-window.downloadPDF = function () {
-
-  const { jsPDF } = window.jspdf;
-  const doc = new jsPDF();
-
-  doc.setFontSize(16);
-  doc.text("SHIPPING RECEIPT", 20, 20);
-
-  doc.setFontSize(12);
-
-  doc.text(`Tracking: ${currentId}`, 20, 40);
-  doc.text(`Status: ${currentData.status}`, 20, 50);
-  doc.text(`Location: ${currentData.location}`, 20, 60);
-  doc.text(`Destination: ${currentData.destination}`, 20, 70);
-  doc.text(`Shipped Date: ${currentData.shippedDate || "N/A"}`, 20, 80);
-  doc.text(`ETA: ${currentData.eta}`, 20, 90);
-
-  doc.save(`receipt-${currentId}.pdf`);
-};
