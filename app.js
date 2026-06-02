@@ -21,55 +21,43 @@ window.addEventListener("DOMContentLoaded", () => {
 
   button.addEventListener("click", async () => {
 
-    const trackingNumber = input.value.trim();
+    const id = input.value.trim();
 
-    if (!trackingNumber) {
-      result.innerHTML = "Please enter a tracking number";
+    if (!id) {
+      result.innerHTML = "❌ Enter tracking number";
       return;
     }
 
-    try {
+    const docRef = doc(db, "shipments", id);
+    const docSnap = await getDoc(docRef);
 
-      const docRef = doc(db, "shipments", trackingNumber);
-      const docSnap = await getDoc(docRef);
-
-      if (!docSnap.exists()) {
-        result.innerHTML = "❌ Tracking number not found";
-        return;
-      }
-
-      const data = docSnap.data();
-
-      result.innerHTML = `
-        <div style="padding:15px;border:1px solid #ddd;border-radius:10px;background:#fff;">
-          <h3>📦 Status: ${data.status || "N/A"}</h3>
-
-          <p>
-            📍 <b>Location:</b>
-            ${data.location || "N/A"}
-          </p>
-
-          <p>
-            🎯 <b>Destination:</b>
-            ${data.destination || "N/A"}
-          </p>
-
-          <p>
-            ⏰ <b>ETA:</b>
-            ${data.eta || "N/A"}
-          </p>
-        </div>
-      `;
-
-    } catch (error) {
-
-      console.error("Firebase Error:", error);
-
-      result.innerHTML = `
-        ❌ Error loading shipment information
-      `;
+    if (!docSnap.exists()) {
+      result.innerHTML = "❌ Tracking number not found";
+      return;
     }
 
-  });
+    const data = docSnap.data();
 
+    result.innerHTML = `
+      <div style="padding:15px;border:1px solid #ddd;border-radius:10px;background:#fff;">
+
+        <h3>📦 Status: ${data.status}</h3>
+
+        <p>📍 <b>Location:</b> ${data.location}</p>
+
+        <p>🎯 <b>Destination:</b> ${data.destination}</p>
+
+        <p>⏰ <b>ETA:</b> ${data.eta}</p>
+
+        <hr>
+
+        <h4>🚚 Route Timeline</h4>
+
+        <ul>
+          ${(data.route || []).map(r => `<li>📍 ${r}</li>`).join("")}
+        </ul>
+
+      </div>
+    `;
+  });
 });
