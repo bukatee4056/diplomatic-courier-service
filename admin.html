@@ -13,20 +13,19 @@
     }
 
     .container {
-      max-width: 600px;
+      max-width: 650px;
       margin: auto;
       background: white;
       padding: 20px;
       border-radius: 10px;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
     }
 
-    input, select {
+    input {
       width: 100%;
       padding: 10px;
       margin-top: 8px;
-      border: 1px solid #ccc;
       border-radius: 6px;
+      border: 1px solid #ccc;
     }
 
     button {
@@ -37,7 +36,6 @@
       color: white;
       border: none;
       border-radius: 6px;
-      cursor: pointer;
     }
 
     .card {
@@ -47,26 +45,6 @@
       border-radius: 8px;
       text-align: left;
     }
-
-    .row-btn {
-      display: flex;
-      gap: 5px;
-      margin-top: 5px;
-    }
-
-    .row-btn button {
-      width: 50%;
-      font-size: 12px;
-    }
-
-    .delete {
-      background: #c0392b;
-    }
-
-    .edit {
-      background: #27ae60;
-    }
-
   </style>
 </head>
 
@@ -77,16 +55,15 @@
   <h2>👨‍💼 Admin Dashboard</h2>
 
   <input id="tracking" placeholder="Tracking Number">
-
   <input id="status" placeholder="Status">
-
   <input id="location" placeholder="Location">
-
   <input id="destination" placeholder="Destination">
-
   <input id="eta" placeholder="ETA">
-
   <input id="shippedDate" placeholder="Shipped Date">
+
+  <input id="customerName" placeholder="Customer Name">
+  <input id="phone" placeholder="Phone Number">
+  <input id="address" placeholder="House Address">
 
   <button id="saveBtn">Save Shipment</button>
 
@@ -94,11 +71,8 @@
 
   <hr>
 
-  <h3>🔎 Search</h3>
-  <input id="search" placeholder="Search tracking number">
-
   <h3>📦 Shipments</h3>
-  <div id="list">Loading...</div>
+  <div id="list"></div>
 
 </div>
 
