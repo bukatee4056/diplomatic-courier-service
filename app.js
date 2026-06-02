@@ -33,12 +33,12 @@ window.addEventListener("load", function () {
     if (docSnap.exists()) {
       const data = docSnap.data();
 
-      result.innerHTML = `
-        <h3>Status: ${data.status}</h3>
-        <p><strong>Location:</strong> ${data.location}</p>
-        <p><strong>Destination:</strong> ${data.destination}</p>
-        <p><strong>ETA:</strong> ${data.eta}</p>
-      `;
+result.innerHTML = `
+  <h3>Status: ${data.Status}</h3>
+  <p><strong>Location:</strong> ${data.Location}</p>
+  <p><strong>Destination:</strong> ${data.Destination}</p>
+  <p><strong>ETA:</strong> ${data.ETA}</p>
+`;
     } else {
       result.innerHTML = "Tracking number not found.";
     }
