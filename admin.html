@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Admin Dashboard - Courier System</title>
+
+  <style>
+    body {
+      font-family: Arial;
+      background: #f4f4f4;
+      padding: 20px;
+    }
+
+    .box {
+      background: white;
+      padding: 20px;
+      max-width: 500px;
+      margin: auto;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+
+    input {
+      width: 100%;
+      padding: 10px;
+      margin: 8px 0;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      background: #0b1f3a;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #163a66;
+    }
+
+    #msg {
+      margin-top: 10px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="box">
+  <h2>📦 Create Shipment</h2>
+
+  <input id="tracking" placeholder="Tracking Number (e.g. DCS123456)">
+  <input id="status" placeholder="Status (In TRANSIT)">
+  <input id="location" placeholder="Location (CAIRO)">
+  <input id="destination" placeholder="Destination (Yemen)">
+  <input id="eta" placeholder="ETA (June 29, 2026)">
+
+  <button id="saveBtn">Save Shipment</button>
+
+  <div id="msg"></div>
+</div>
+
+<script type="module" src="admin.js"></script>
+
+</body>
+</html>
