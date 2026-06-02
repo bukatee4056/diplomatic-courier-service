@@ -13,10 +13,10 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
+let currentData = null;
+let currentId = null;
 let map;
 let marker;
-let currentData;
-let currentId;
 
 window.addEventListener("DOMContentLoaded", () => {
 
@@ -46,29 +46,37 @@ window.addEventListener("DOMContentLoaded", () => {
     currentId = id;
 
     result.innerHTML = `
-      <div style="background:white;padding:15px;border-radius:10px;text-align:left">
+      <div class="card">
 
-        <h3>📦 ${id}</h3>
+        <h3>📦 Tracking: ${id}</h3>
 
         <p>📍 Location: ${data.location}</p>
         <p>🎯 Destination: ${data.destination}</p>
         <p>📅 Shipped Date: ${data.shippedDate || "N/A"}</p>
         <p>⏰ ETA: ${data.eta}</p>
-        <p>📦 Status: ${data.status}</p>
+        <p class="status">📦 Status: ${data.status}</p>
 
-        <button onclick="downloadPDF()">📄 Download DHL Receipt (PDF)</button>
+        <hr>
+
+        <h4>🚚 Route Timeline</h4>
+
+        <ul>
+          ${(data.route || []).map(r => `<li>📍 ${r}</li>`).join("")}
+        </ul>
+
+        <button onclick="downloadPDF()">Download Receipt</button>
 
       </div>
     `;
 
-    loadMap(data.route || []);
+    loadMap();
 
   });
 
 });
 
 // ---------------- MAP ----------------
-function loadMap(route) {
+function loadMap() {
 
   if (!map) {
     map = L.map('map').setView([20, 0], 2);
@@ -113,7 +121,7 @@ window.downloadPDF = function () {
   const doc = new jsPDF();
 
   doc.setFontSize(16);
-  doc.text("DHL STYLE SHIPPING RECEIPT", 20, 20);
+  doc.text("SHIPPING RECEIPT", 20, 20);
 
   doc.setFontSize(12);
 
@@ -124,5 +132,5 @@ window.downloadPDF = function () {
   doc.text(`Shipped Date: ${currentData.shippedDate || "N/A"}`, 20, 80);
   doc.text(`ETA: ${currentData.eta}`, 20, 90);
 
-  doc.save(`DHL-Receipt-${currentId}.pdf`);
+  doc.save(`receipt-${currentId}.pdf`);
 };
