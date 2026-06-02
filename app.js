@@ -24,7 +24,7 @@ window.addEventListener("DOMContentLoaded", () => {
     const trackingNumber = input.value.trim();
 
     if (!trackingNumber) {
-      result.innerHTML = "Please enter tracking number";
+      result.innerHTML = "Please enter a tracking number";
       return;
     }
 
@@ -34,25 +34,40 @@ window.addEventListener("DOMContentLoaded", () => {
       const docSnap = await getDoc(docRef);
 
       if (!docSnap.exists()) {
-        result.innerHTML = "Tracking number not found";
+        result.innerHTML = "❌ Tracking number not found";
         return;
       }
 
       const data = docSnap.data();
 
-      // 📦 DISPLAY RESULT
       result.innerHTML = `
-        <div style="padding:10px; border:1px solid #ddd; border-radius:8px;">
-          <h3>📦 Status: ${data.Status}</h3>
-          <p><b>Location:</b> ${data.Location}</p>
-          <p><b>Destination:</b> ${data.Destination}</p>
-          <p><b>ETA:</b> ${data.ETA}</p>
+        <div style="padding:15px;border:1px solid #ddd;border-radius:10px;background:#fff;">
+          <h3>📦 Status: ${data.status || "N/A"}</h3>
+
+          <p>
+            📍 <b>Location:</b>
+            ${data.location || "N/A"}
+          </p>
+
+          <p>
+            🎯 <b>Destination:</b>
+            ${data.destination || "N/A"}
+          </p>
+
+          <p>
+            ⏰ <b>ETA:</b>
+            ${data.eta || "N/A"}
+          </p>
         </div>
       `;
 
     } catch (error) {
-      console.error(error);
-      result.innerHTML = "Error loading shipment data";
+
+      console.error("Firebase Error:", error);
+
+      result.innerHTML = `
+        ❌ Error loading shipment information
+      `;
     }
 
   });
