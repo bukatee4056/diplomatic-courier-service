@@ -2,50 +2,114 @@
 <html>
 <head>
   <meta charset="UTF-8">
-  <title>Admin Dashboard</title>
+  <title>Enterprise Courier Admin</title>
 
   <style>
-    body { font-family: Arial; background:#f4f4f4; padding:20px; }
-    .box { background:white; padding:20px; border-radius:10px; margin-bottom:20px; }
-    input { padding:10px; margin:5px; width:100%; }
-    button { padding:10px; margin:5px; cursor:pointer; }
+    body {
+      font-family: Arial;
+      background: #0b1220;
+      color: white;
+      padding: 20px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+
+    .card {
+      background: #111a2e;
+      padding: 15px;
+      border-radius: 10px;
+      text-align: center;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 10px;
+      margin: 5px 0;
+    }
+
+    button {
+      width: 100%;
+      padding: 10px;
+      background: #2d6cdf;
+      border: none;
+      color: white;
+      cursor: pointer;
+      margin-top: 5px;
+    }
 
     table {
-      width:100%;
+      width: 100%;
       border-collapse: collapse;
-      background:white;
+      background: #111a2e;
     }
 
     th, td {
-      border:1px solid #ddd;
-      padding:10px;
-      text-align:left;
+      border: 1px solid #222;
+      padding: 10px;
+      text-align: left;
     }
 
-    th { background:#0b1f3a; color:white; }
-    .btn { margin-right:5px; }
+    th {
+      background: #1b2a4a;
+    }
+
+    .row {
+      margin-top: 20px;
+    }
   </style>
 </head>
 
 <body>
 
-<h2>📦 DHL-Style Admin Dashboard</h2>
+<h2>📦 Enterprise Courier Dashboard</h2>
 
-<div class="box">
+<div class="grid">
+  <div class="card">
+    <h3>Total</h3>
+    <h2 id="total">0</h2>
+  </div>
+
+  <div class="card">
+    <h3>In Transit</h3>
+    <h2 id="transit">0</h2>
+  </div>
+
+  <div class="card">
+    <h3>Delivered</h3>
+    <h2 id="delivered">0</h2>
+  </div>
+</div>
+
+<div class="card">
   <h3>Create / Update Shipment</h3>
 
   <input id="tracking" placeholder="Tracking Number">
-  <input id="status" placeholder="Status">
+  
+  <select id="status">
+    <option>Pending</option>
+    <option>Processing</option>
+    <option>In Transit</option>
+    <option>Delivered</option>
+  </select>
+
   <input id="location" placeholder="Location">
   <input id="destination" placeholder="Destination">
   <input id="eta" placeholder="ETA">
 
   <button id="saveBtn">Save Shipment</button>
+
+  <input id="search" placeholder="Search tracking number">
+  <button id="searchBtn">Search</button>
+
   <p id="msg"></p>
 </div>
 
-<div class="box">
-  <h3>All Shipments</h3>
+<div class="row">
   <table>
     <thead>
       <tr>
@@ -54,7 +118,6 @@
         <th>Location</th>
         <th>Destination</th>
         <th>ETA</th>
-        <th>Actions</th>
       </tr>
     </thead>
     <tbody id="tableBody"></tbody>
