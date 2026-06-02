@@ -40,14 +40,40 @@ window.addEventListener("DOMContentLoaded", () => {
 
       const data = docSnap.data();
 
-      console.log("RAW FIREBASE DATA:", data);
+      // 🔥 SMART AUTO DETECTION (NO MORE FIELD PROBLEMS EVER)
+      const status =
+        data.Status ||
+        data.status ||
+        data["Status "] ||
+        data["status "] ||
+        "N/A";
 
-      // SAFE DISPLAY (handles any mismatch)
+      const location =
+        data.Location ||
+        data.location ||
+        data["Location "] ||
+        data["location "] ||
+        "N/A";
+
+      const destination =
+        data.Destination ||
+        data.destination ||
+        data["Destination "] ||
+        data["destination "] ||
+        "N/A";
+
+      const eta =
+        data.ETA ||
+        data.eta ||
+        data["ETA "] ||
+        data["eta "] ||
+        "N/A";
+
       result.innerHTML = `
-        <h3>Status: ${data.Status || data.status || "N/A"}</h3>
-        <p><b>Location:</b> ${data.Location || data.location || "N/A"}</p>
-        <p><b>Destination:</b> ${data.Destination || data.destination || "N/A"}</p>
-        <p><b>ETA:</b> ${data.ETA || data.eta || "N/A"}</p>
+        <h3>Status: ${status}</h3>
+        <p><b>Location:</b> ${location}</p>
+        <p><b>Destination:</b> ${destination}</p>
+        <p><b>ETA:</b> ${eta}</p>
       `;
 
     } catch (error) {
