@@ -15,8 +15,8 @@ const db = getFirestore(app);
 
 window.addEventListener("DOMContentLoaded", () => {
 
-  const button = document.querySelector("button");
-  const input = document.querySelector("input");
+  const button = document.getElementById("trackBtn");
+  const input = document.getElementById("trackingInput");
   const result = document.getElementById("result");
 
   button.addEventListener("click", async () => {
@@ -24,11 +24,12 @@ window.addEventListener("DOMContentLoaded", () => {
     const trackingNumber = input.value.trim();
 
     if (!trackingNumber) {
-      result.innerHTML = "Enter tracking number";
+      result.innerHTML = "Please enter tracking number";
       return;
     }
 
     try {
+
       const docRef = doc(db, "shipments", trackingNumber);
       const docSnap = await getDoc(docRef);
 
@@ -39,9 +40,6 @@ window.addEventListener("DOMContentLoaded", () => {
 
       const data = docSnap.data();
 
-      console.log("RAW FIREBASE DATA:", data);
-
-      // SAFE DISPLAY (prevents undefined breaking UI)
       result.innerHTML = `
         <h3>Status: ${data.Status || "N/A"}</h3>
         <p><b>Location:</b> ${data.Location || "N/A"}</p>
