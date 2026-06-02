@@ -40,44 +40,19 @@ window.addEventListener("DOMContentLoaded", () => {
 
       const data = docSnap.data();
 
-      // 🔥 SMART AUTO DETECTION (NO MORE FIELD PROBLEMS EVER)
-      const status =
-        data.Status ||
-        data.status ||
-        data["Status "] ||
-        data["status "] ||
-        "N/A";
-
-      const location =
-        data.Location ||
-        data.location ||
-        data["Location "] ||
-        data["location "] ||
-        "N/A";
-
-      const destination =
-        data.Destination ||
-        data.destination ||
-        data["Destination "] ||
-        data["destination "] ||
-        "N/A";
-
-      const eta =
-        data.ETA ||
-        data.eta ||
-        data["ETA "] ||
-        data["eta "] ||
-        "N/A";
+      console.log("RAW FIREBASE DATA:", data);
 
       result.innerHTML = `
-        <h3>Status: ${status}</h3>
-        <p><b>Location:</b> ${location}</p>
-        <p><b>Destination:</b> ${destination}</p>
-        <p><b>ETA:</b> ${eta}</p>
+        <div style="padding:10px; border:1px solid #ddd; border-radius:8px; font-family: Arial;">
+          <h3>📦 Status: ${data.Status || "N/A"}</h3>
+          <p>📍 <b>Location:</b> ${data.Location || "N/A"}</p>
+          <p>🎯 <b>Destination:</b> ${data.Destination || "N/A"}</p>
+          <p>⏰ <b>ETA:</b> ${data.ETA || "N/A"}</p>
+        </div>
       `;
 
     } catch (error) {
-      console.error(error);
+      console.error("Firebase error:", error);
       result.innerHTML = "Error loading shipment data";
     }
 
