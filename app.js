@@ -13,14 +13,16 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
+let map;
+let marker;
+let currentData;
+let currentId;
+
 window.addEventListener("DOMContentLoaded", () => {
 
   const btn = document.getElementById("trackBtn");
   const input = document.getElementById("trackingInput");
   const result = document.getElementById("result");
-
-  let currentData = null;
-  let currentId = null;
 
   btn.addEventListener("click", async () => {
 
@@ -44,63 +46,83 @@ window.addEventListener("DOMContentLoaded", () => {
     currentId = id;
 
     result.innerHTML = `
-      <div class="card">
+      <div style="background:white;padding:15px;border-radius:10px;text-align:left">
 
-        <h3>📦 Tracking: ${id}</h3>
+        <h3>📦 ${id}</h3>
 
         <p>📍 Location: ${data.location}</p>
         <p>🎯 Destination: ${data.destination}</p>
+        <p>📅 Shipped Date: ${data.shippedDate || "N/A"}</p>
         <p>⏰ ETA: ${data.eta}</p>
-        <p class="status">📦 Status: ${data.status}</p>
+        <p>📦 Status: ${data.status}</p>
 
-        <hr>
-
-        <h4>🚚 Route Timeline</h4>
-
-        <ul>
-          ${(data.route || []).map(r => `<li>📍 ${r}</li>`).join("")}
-        </ul>
-
-        <button class="receipt-btn" id="receiptBtn">
-          Download Receipt
-        </button>
+        <button onclick="downloadPDF()">📄 Download DHL Receipt (PDF)</button>
 
       </div>
     `;
 
-    document.getElementById("receiptBtn").onclick = downloadReceipt;
+    loadMap(data.route || []);
 
   });
 
-  function downloadReceipt() {
+});
 
-    if (!currentData || !currentId) return;
+// ---------------- MAP ----------------
+function loadMap(route) {
 
-    const content = `
-===== SHIPPING RECEIPT =====
+  if (!map) {
+    map = L.map('map').setView([20, 0], 2);
 
-Tracking Number: ${currentId}
-
-Status: ${currentData.status}
-Location: ${currentData.location}
-Destination: ${currentData.destination}
-ETA: ${currentData.eta}
-
-Route:
-${(currentData.route || []).join(" → ")}
-
-Generated: ${new Date().toLocaleString()}
-
-===========================
-`;
-
-    const blob = new Blob([content], { type: "text/plain" });
-    const link = document.createElement("a");
-
-    link.href = URL.createObjectURL(blob);
-    link.download = `receipt-${currentId}.txt`;
-
-    link.click();
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '© OpenStreetMap'
+    }).addTo(map);
   }
 
-});
+  map.eachLayer(layer => {
+    if (layer instanceof L.Marker || layer instanceof L.Polyline) {
+      map.removeLayer(layer);
+    }
+  });
+
+  const coords = [
+    [40.7128, -74.0060],
+    [51.5074, -0.1278],
+    [30.0444, 31.2357],
+    [6.5244, 3.3792]
+  ];
+
+  L.polyline(coords, { color: 'blue' }).addTo(map);
+
+  marker = L.marker(coords[0]).addTo(map);
+
+  let i = 0;
+
+  setInterval(() => {
+    if (i < coords.length) {
+      marker.setLatLng(coords[i]);
+      map.panTo(coords[i]);
+      i++;
+    }
+  }, 2000);
+}
+
+// ---------------- PDF RECEIPT ----------------
+window.downloadPDF = function () {
+
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF();
+
+  doc.setFontSize(16);
+  doc.text("DHL STYLE SHIPPING RECEIPT", 20, 20);
+
+  doc.setFontSize(12);
+
+  doc.text(`Tracking: ${currentId}`, 20, 40);
+  doc.text(`Status: ${currentData.status}`, 20, 50);
+  doc.text(`Location: ${currentData.location}`, 20, 60);
+  doc.text(`Destination: ${currentData.destination}`, 20, 70);
+  doc.text(`Shipped Date: ${currentData.shippedDate || "N/A"}`, 20, 80);
+  doc.text(`ETA: ${currentData.eta}`, 20, 90);
+
+  doc.save(`DHL-Receipt-${currentId}.pdf`);
+};
