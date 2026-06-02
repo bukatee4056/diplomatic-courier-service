@@ -18,9 +18,11 @@ window.addEventListener("load", function () {
   const button = document.querySelector("button");
   const result = document.getElementById("result");
 
-  button.addEventListener("click", async function () {
+button.addEventListener("click", async function () {
 
-    const trackingNumber = document.querySelector("input").value.trim();
+  alert("Button clicked");
+
+  const trackingNumber = document.querySelector("input").value.trim();
 
     if (!trackingNumber) {
       result.innerHTML = "Please enter a tracking number.";
