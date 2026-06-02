@@ -23,45 +23,40 @@ const db = getFirestore(app);
 
 // INPUTS
 const tracking = document.getElementById("tracking");
-const status = document.getElementById("status");
-const location = document.getElementById("location");
-const destination = document.getElementById("destination");
-const eta = document.getElementById("eta");
-const shippedDate = document.getElementById("shippedDate");
-
 const customerName = document.getElementById("customerName");
 const phone = document.getElementById("phone");
 const address = document.getElementById("address");
+const location = document.getElementById("location");
+const destination = document.getElementById("destination");
+const status = document.getElementById("status");
+const eta = document.getElementById("eta");
+const shippedDate = document.getElementById("shippedDate");
 
-const msg = document.getElementById("msg");
 const list = document.getElementById("list");
 
-// SAVE / UPDATE
+// SAVE
 document.getElementById("saveBtn").addEventListener("click", async () => {
 
   const id = tracking.value.trim();
 
-  if (!id) return (msg.innerText = "❌ Enter tracking number");
+  if (!id) return alert("Enter tracking number");
 
   await setDoc(doc(db, "shipments", id), {
-    status: status.value,
+    customerName: customerName.value,
+    phone: phone.value,
+    address: address.value,
     location: location.value,
     destination: destination.value,
+    status: status.value,
     eta: eta.value,
-    shippedDate: shippedDate.value || "",
-
-    customerName: customerName.value || "",
-    phone: phone.value || "",
-    address: address.value || "",
-
+    shippedDate: shippedDate.value,
     updatedAt: Date.now()
   });
 
-  msg.innerText = "✅ Saved successfully!";
   loadShipments();
 });
 
-// LOAD ALL
+// LOAD TABLE
 async function loadShipments() {
 
   const snap = await getDocs(collection(db, "shipments"));
@@ -73,27 +68,25 @@ async function loadShipments() {
     const data = d.data();
 
     html += `
-      <div class="card">
+      <tr>
+        <td>${d.id}</td>
+        <td>${data.customerName || ""}</td>
+        <td>${data.phone || ""}</td>
+        <td>${data.location || ""}</td>
+        <td>${data.destination || ""}</td>
+        <td>${data.status || ""}</td>
+        <td>${data.eta || ""}</td>
+        <td class="actions">
 
-        <b>📦 ${d.id}</b><br><br>
+          <button class="edit" onclick="editShipment('${d.id}')">Edit</button>
+          <button class="delete" onclick="deleteShipment('${d.id}')">Delete</button>
 
-        👤 ${data.customerName || "N/A"}<br>
-        📞 ${data.phone || "N/A"}<br>
-        🏠 ${data.address || "N/A"}<br><br>
-
-        📍 ${data.location} → ${data.destination}<br>
-        📦 ${data.status}<br>
-        📅 ${data.shippedDate || "N/A"}<br>
-        ⏰ ${data.eta}<br><br>
-
-        <button onclick="editShipment('${d.id}')">Edit</button>
-        <button onclick="deleteShipment('${d.id}')">Delete</button>
-
-      </div>
+        </td>
+      </tr>
     `;
   });
 
-  list.innerHTML = html || "No shipments found";
+  list.innerHTML = html;
 }
 
 // DELETE
@@ -106,20 +99,17 @@ window.deleteShipment = async (id) => {
 window.editShipment = async (id) => {
 
   const snap = await getDoc(doc(db, "shipments", id));
-  if (!snap.exists()) return;
-
   const d = snap.data();
 
   tracking.value = id;
-  status.value = d.status;
+  customerName.value = d.customerName;
+  phone.value = d.phone;
+  address.value = d.address;
   location.value = d.location;
   destination.value = d.destination;
+  status.value = d.status;
   eta.value = d.eta;
-  shippedDate.value = d.shippedDate || "";
-
-  customerName.value = d.customerName || "";
-  phone.value = d.phone || "";
-  address.value = d.address || "";
+  shippedDate.value = d.shippedDate;
 };
 
 // INIT
