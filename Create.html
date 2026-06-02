@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Create Shipment</title>
+
+<style>
+body{
+  background:#0b1220;
+  color:white;
+  font-family:Arial;
+  padding:20px;
+}
+
+input,button{
+  width:100%;
+  padding:10px;
+  margin-top:10px;
+  border:none;
+  border-radius:8px;
+}
+
+button{
+  background:#22c55e;
+  color:white;
+}
+</style>
+</head>
+
+<body>
+
+<h2>➕ Create Shipment</h2>
+
+<input id="id" placeholder="Tracking ID">
+<input id="name" placeholder="Customer Name">
+<input id="phone" placeholder="Phone">
+<input id="location" placeholder="Location">
+<input id="destination" placeholder="Destination">
+<input id="status" placeholder="Status">
+<input id="eta" placeholder="ETA">
+<input id="shipped" placeholder="Shipped Date">
+
+<button onclick="save()">Save</button>
+
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const app = initializeApp({
+  apiKey: "YOUR_KEY",
+  authDomain: "diplomatic-courier-service.firebaseapp.com",
+  projectId: "diplomatic-courier-service"
+});
+
+const db = getFirestore(app);
+
+window.save = async () => {
+
+const id = document.getElementById("id").value;
+
+await setDoc(doc(db,"shipments",id),{
+  customerName: document.getElementById("name").value,
+  phone: document.getElementById("phone").value,
+  location: document.getElementById("location").value,
+  destination: document.getElementById("destination").value,
+  status: document.getElementById("status").value,
+  eta: document.getElementById("eta").value,
+  shippedDate: document.getElementById("shipped").value,
+  route:[]
+});
+
+alert("Shipment Created ✔");
+};
+
+</script>
+
+</body>
+</html>
