@@ -1,17 +1,5 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import {
-  getFirestore,
-  doc,
-  setDoc,
-  getDoc,
-  getDocs,
-  collection
-} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-
-import {
-  getAuth,
-  onAuthStateChanged
-} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyAwjcKxnViESMXyCzhML2sZPbA_HBzytMg",
@@ -24,94 +12,54 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
-const auth = getAuth(app);
 
-/* 🔐 protect admin page */
-onAuthStateChanged(auth, (user) => {
-  if (!user) {
-    window.location.href = "login.html";
-  }
-});
-
-/* INPUTS */
+// INPUTS
 const tracking = document.getElementById("tracking");
 const status = document.getElementById("status");
 const location = document.getElementById("location");
 const destination = document.getElementById("destination");
 const eta = document.getElementById("eta");
-const route = document.getElementById("route");
+const shippedDate = document.getElementById("shippedDate");
 const msg = document.getElementById("msg");
 
-const tableBody = document.getElementById("tableBody");
-
-/* SAVE SHIPMENT */
+// SAVE BUTTON
 document.getElementById("saveBtn").addEventListener("click", async () => {
 
   const id = tracking.value.trim();
 
   if (!id) {
-    msg.innerText = "Enter tracking number";
+    msg.innerText = "❌ Enter tracking number";
     return;
   }
 
-  await setDoc(doc(db, "shipments", id), {
-    status: status.value,
-    location: location.value,
-    destination: destination.value,
-    eta: eta.value,
-    route: route.value.split(",").map(r => r.trim()),
-    updatedAt: Date.now()
-  });
-
-  msg.innerText = "Saved successfully";
-  loadData();
-});
-
-/* LOAD ALL SHIPMENTS */
-async function loadData() {
-
-  tableBody.innerHTML = "";
-
-  const snap = await getDocs(collection(db, "shipments"));
-
-  snap.forEach(d => {
-    const data = d.data();
-
-    tableBody.innerHTML += `
-      <tr>
-        <td>${d.id}</td>
-        <td>${data.status}</td>
-        <td>${data.location}</td>
-        <td>${data.destination}</td>
-        <td>${data.eta}</td>
-      </tr>
-    `;
-  });
-}
-
-/* SEARCH SHIPMENT */
-document.getElementById("searchBtn").addEventListener("click", async () => {
-
-  const id = document.getElementById("search").value.trim();
-
-  const snap = await getDoc(doc(db, "shipments", id));
-
-  if (!snap.exists()) {
-    msg.innerText = "Not found";
+  if (!status.value || !location.value || !destination.value || !eta.value) {
+    msg.innerText = "❌ Please fill all required fields";
     return;
   }
 
-  const d = snap.data();
+  try {
+    await setDoc(doc(db, "shipments", id), {
+      status: status.value,
+      location: location.value,
+      destination: destination.value,
+      eta: eta.value,
+      shippedDate: shippedDate.value || "",
+      updatedAt: Date.now()
+    });
 
-  tableBody.innerHTML = `
-    <tr>
-      <td>${id}</td>
-      <td>${d.status}</td>
-      <td>${d.location}</td>
-      <td>${d.destination}</td>
-      <td>${d.eta}</td>
-    </tr>
-  `;
+    msg.innerText = "✅ Shipment saved successfully!";
+
+    // Optional: clear form after save
+    tracking.value = "";
+    status.value = "";
+    location.value = "";
+    destination.value = "";
+    eta.value = "";
+    shippedDate.value = "";
+
+  } catch (error) {
+    console.error(error);
+    msg.innerText = "❌ Error saving shipment";
+  }
+
 });
-
-loadData();
