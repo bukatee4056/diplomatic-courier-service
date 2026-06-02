@@ -1,97 +1,105 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="UTF-8">
-  <title>Track Shipment</title>
+<meta charset="UTF-8">
+<title>Shipment Tracking</title>
 
-  <style>
-    body {
-      font-family: Arial;
-      background: #0b1220;
-      margin: 0;
-      padding: 20px;
-      color: white;
-    }
+<style>
+body{
+  margin:0;
+  font-family: Arial;
+  background:#0b1220;
+  color:white;
+}
 
-    .container {
-      max-width: 700px;
-      margin: auto;
-    }
+.container{
+  max-width:800px;
+  margin:auto;
+  padding:20px;
+}
 
-    .box {
-      background: white;
-      color: black;
-      padding: 20px;
-      border-radius: 12px;
-    }
+.searchBox{
+  background:#111a2e;
+  padding:20px;
+  border-radius:12px;
+}
 
-    input {
-      width: 100%;
-      padding: 12px;
-      border-radius: 8px;
-      border: none;
-      margin-top: 10px;
-    }
+input{
+  width:100%;
+  padding:12px;
+  border-radius:8px;
+  border:none;
+  margin-top:10px;
+}
 
-    button {
-      width: 100%;
-      padding: 12px;
-      margin-top: 10px;
-      background: #ffcc00;
-      border: none;
-      border-radius: 8px;
-      font-weight: bold;
-      cursor: pointer;
-    }
+button{
+  width:100%;
+  padding:12px;
+  margin-top:10px;
+  border:none;
+  border-radius:8px;
+  background:#f5c542;
+  font-weight:bold;
+  cursor:pointer;
+}
 
-    .card {
-      margin-top: 20px;
-      background: white;
-      color: black;
-      padding: 20px;
-      border-radius: 12px;
-    }
+.card{
+  margin-top:20px;
+  background:#111a2e;
+  padding:20px;
+  border-radius:12px;
+}
 
-    .grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-    }
+.grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+}
 
-    .status {
-      margin-top: 15px;
-      padding: 10px;
-      border-radius: 8px;
-      background: #f4f6f9;
-    }
+.label{
+  color:#9aa4b2;
+  font-size:13px;
+}
 
-    .step {
-      padding: 8px;
-      margin-top: 5px;
-      border-left: 4px solid #0b3d91;
-      background: #f1f5ff;
-    }
+.value{
+  font-size:15px;
+  margin-top:3px;
+}
 
-    .title {
-      font-size: 18px;
-      font-weight: bold;
-      margin-bottom: 10px;
-    }
+.section{
+  margin-top:15px;
+  padding:10px;
+  background:#0f172a;
+  border-radius:10px;
+}
 
-  </style>
+.step{
+  display:flex;
+  align-items:center;
+  padding:8px;
+  margin-top:5px;
+  border-left:4px solid #2d6cdf;
+  background:#0b1220;
+  border-radius:6px;
+  opacity:0.4;
+}
+
+.step.active{
+  opacity:1;
+  border-left:4px solid #00d084;
+}
+
+</style>
 </head>
 
 <body>
 
 <div class="container">
 
-  <div class="box">
-
-    <h2>📦 Track Your Shipment</h2>
-
-    <input id="trackingInput" placeholder="Enter Tracking Number">
+  <div class="searchBox">
+    <h2>📦 Track Shipment</h2>
+    <input id="trackingInput" placeholder="Enter Tracking ID">
     <button id="trackBtn">Track Package</button>
-
   </div>
 
   <div id="result"></div>
