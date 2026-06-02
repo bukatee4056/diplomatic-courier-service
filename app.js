@@ -32,14 +32,18 @@ button.addEventListener("click", async function () {
     const docRef = doc(db, "shipments", trackingNumber);
     const docSnap = await getDoc(docRef);
 
-    if (docSnap.exists()) {
-      const data = docSnap.data();
+if (docSnap.exists()) {
+  const data = docSnap.data();
 
- result.innerHTML = `
-  <h3>Status: ${data.Status}</h3>
-  <p><strong>Location:</strong> ${data.Location}</p>
-  <p><strong>Destination:</strong> ${data.Destination}</p>
-  <p><strong>ETA:</strong> ${data.ETA}</p>
+  result.innerHTML = `
+    <h3>Status: ${data.Status}</h3>
+    <p><strong>Location:</strong> ${data.Location}</p>
+    <p><strong>Destination:</strong> ${data.Destination}</p>
+    <p><strong>ETA:</strong> ${data.ETA}</p>
+  `;
+} else {
+  result.innerHTML = "Tracking number not found.";
+}
 
       `;
     } else {
@@ -47,5 +51,4 @@ button.addEventListener("click", async function () {
     }
 
   });
-
 });
