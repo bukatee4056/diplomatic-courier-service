@@ -6,8 +6,8 @@
 <style>
 body{
   background:#0b1220;
-  color:white;
   font-family:Arial;
+  color:white;
   display:flex;
   justify-content:center;
   align-items:center;
@@ -32,7 +32,6 @@ input,button{
 button{
   background:#22c55e;
   color:white;
-  cursor:pointer;
 }
 </style>
 </head>
@@ -43,35 +42,22 @@ button{
 <h2>Admin Login</h2>
 
 <input id="email" placeholder="Email">
-<input id="password" type="password" placeholder="Password">
+<input id="pass" type="password" placeholder="Password">
 
 <button onclick="login()">Login</button>
 </div>
 
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+<script>
+function login(){
+  const email=document.getElementById("email").value;
+  const pass=document.getElementById("pass").value;
 
-const app = initializeApp({
-apiKey: "YOUR_KEY",
-authDomain: "diplomatic-courier-service.firebaseapp.com",
-projectId: "diplomatic-courier-service"
-});
-
-const auth = getAuth(app);
-
-window.login = async () => {
-const email = document.getElementById("email").value;
-const password = document.getElementById("password").value;
-
-try{
-await signInWithEmailAndPassword(auth,email,password);
-alert("Login Successful");
-window.location.href="admin.html";
-}catch(e){
-alert("Login Failed");
+  if(email==="admin" && pass==="admin123"){
+    window.location.href="dashboard.html";
+  } else {
+    alert("Wrong login");
+  }
 }
-};
 </script>
 
 </body>
