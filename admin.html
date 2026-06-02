@@ -1,138 +1,111 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="UTF-8">
-  <title>Admin Dashboard</title>
+<meta charset="UTF-8">
+<title>Logistics Control Center</title>
 
-  <style>
-    body {
-      font-family: Arial;
-      background: #eef2f7;
-      margin: 0;
-      padding: 20px;
-    }
+<style>
+body{
+  margin:0;
+  font-family:Arial;
+  background:#0b1220;
+  color:white;
+}
 
-    .container {
-      max-width: 1100px;
-      margin: auto;
-      background: white;
-      padding: 20px;
-      border-radius: 10px;
-    }
+.header{
+  padding:20px;
+  background:#111a2e;
+  text-align:center;
+}
 
-    h2 {
-      text-align: center;
-    }
+.grid{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:10px;
+  padding:20px;
+}
 
-    .form {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 10px;
-      margin-bottom: 15px;
-    }
+.card{
+  background:#111a2e;
+  padding:20px;
+  border-radius:12px;
+  text-align:center;
+}
 
-    input {
-      padding: 10px;
-      border: 1px solid #ccc;
-      border-radius: 6px;
-    }
+.form{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:10px;
+  padding:20px;
+}
 
-    button {
-      grid-column: span 3;
-      padding: 12px;
-      background: #0b3d91;
-      color: white;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-    }
+input{
+  padding:10px;
+  border:none;
+  border-radius:6px;
+}
 
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 20px;
-    }
+button{
+  grid-column:span 3;
+  padding:12px;
+  background:#f5c542;
+  border:none;
+  border-radius:8px;
+  font-weight:bold;
+  cursor:pointer;
+}
 
-    th, td {
-      border: 1px solid #ddd;
-      padding: 10px;
-      font-size: 13px;
-    }
+table{
+  width:100%;
+  border-collapse:collapse;
+  margin-top:20px;
+}
 
-    th {
-      background: #0b3d91;
-      color: white;
-    }
-
-    .actions button {
-      padding: 5px 8px;
-      font-size: 12px;
-      margin-right: 5px;
-    }
-
-    .delete { background: red; color: white; border: none; }
-    .edit { background: green; color: white; border: none; }
-    .pdf { background: black; color: white; border: none; }
-
-    #map {
-      height: 300px;
-      margin-top: 20px;
-      border-radius: 10px;
-    }
-  </style>
-
-  <!-- MAP -->
-  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css">
-  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-
-  <!-- PDF -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-
+th,td{
+  padding:10px;
+  border-bottom:1px solid #1f2937;
+}
+</style>
 </head>
 
 <body>
 
-<div class="container">
+<div class="header">
+<h2>📊 Logistics Control Center</h2>
+</div>
 
-  <h2>📦 Logistics Admin Dashboard</h2>
+<div class="grid">
+<div class="card"><h3 id="total">0</h3><p>Total</p></div>
+<div class="card"><h3 id="transit">0</h3><p>In Transit</p></div>
+<div class="card"><h3 id="delivered">0</h3><p>Delivered</p></div>
+<div class="card"><h3 id="pending">0</h3><p>Pending</p></div>
+</div>
 
-  <div class="form">
+<div class="form">
 
-    <input id="tracking" placeholder="Tracking Number">
-    <input id="customerName" placeholder="Customer Name">
-    <input id="phone" placeholder="Phone Number">
+<input id="tracking" placeholder="Tracking ID">
+<input id="customerName" placeholder="Customer Name">
+<input id="phone" placeholder="Phone">
+<input id="address" placeholder="Address">
+<input id="eta" placeholder="ETA">
+<input id="shippedDate" placeholder="Shipped Date">
 
-    <input id="address" placeholder="Address">
-    <input id="location" placeholder="Location">
-    <input id="destination" placeholder="Destination">
-
-    <input id="status" placeholder="Status">
-    <input id="eta" placeholder="ETA">
-    <input id="shippedDate" placeholder="Shipped Date">
-
-    <button id="saveBtn">Save Shipment</button>
-
-  </div>
-
-  <table>
-    <thead>
-      <tr>
-        <th>Tracking</th>
-        <th>Customer</th>
-        <th>Phone</th>
-        <th>Status</th>
-        <th>Route</th>
-        <th>Actions</th>
-      </tr>
-    </thead>
-
-    <tbody id="list"></tbody>
-  </table>
-
-  <h3>📍 Live Route Map</h3>
-  <div id="map"></div>
+<button id="saveBtn">Save Shipment</button>
 
 </div>
+
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Customer</th>
+<th>Status</th>
+<th>Progress</th>
+</tr>
+</thead>
+
+<tbody id="list"></tbody>
+</table>
 
 <script type="module" src="admin.js"></script>
 
