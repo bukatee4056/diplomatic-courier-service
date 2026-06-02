@@ -10,7 +10,7 @@ projectId: "diplomatic-courier-service"
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-// STATUS STEPS
+// STEP SYSTEM
 function getStep(status){
 return {
 "Order Confirmed":1,
@@ -26,7 +26,7 @@ let map;
 let marker;
 let polyline;
 
-// INIT MAP
+// INIT MAP (ONLY ORIGIN → DESTINATION)
 function initMap(route){
 
 if(map) map.remove();
@@ -43,10 +43,10 @@ marker = L.marker(route[0]).addTo(map);
 }
 
 // MOVE MARKER
-function moveMarker(route,index){
+function moveMarker(route,i){
 if(marker){
-marker.setLatLng(route[index]);
-map.panTo(route[index]);
+marker.setLatLng(route[i]);
+map.panTo(route[i]);
 }
 }
 
@@ -67,19 +67,16 @@ if(!snap.exists()) return;
 const d = snap.data();
 const step = getStep(d.status);
 
-// ✅ FIXED ROUTE (REAL COORDINATES FROM FIRESTORE)
-const route = d.route && d.route.length
-? d.route.map(r => [r.lat, r.lng])
-: [
-[24.7136,46.6753], // Saudi Arabia
-[30.0444,31.2357], // Egypt
-[6.5244,3.3792]    // Nigeria
+// 🌍 ONLY SHIPMENT ROUTE (NO USER LOCATION)
+const route = [
+  [d.fromLat, d.fromLng],   // Origin (Yemen etc)
+  [d.toLat, d.toLng]       // Destination (Egypt etc)
 ];
 
 // INIT MAP
 setTimeout(()=>initMap(route),300);
 
-// ANIMATE MOVEMENT
+// SIMULATION MOVEMENT
 let i = 0;
 setInterval(()=>{
 if(i < route.length-1){
@@ -108,13 +105,13 @@ result.innerHTML = `
 </div>
 
 <div class="box">
-<div class="label">Destination</div>
-<div class="value">${d.destination}</div>
+<div class="label">Location</div>
+<div class="value">${d.location}</div>
 </div>
 
 <div class="box">
-<div class="label">Route</div>
-<div class="value">${d.location} → ${d.destination}</div>
+<div class="label">Destination</div>
+<div class="value">${d.destination}</div>
 </div>
 
 <div class="box">
@@ -159,8 +156,8 @@ pdf.text("Diplomatic Courier Service Receipt",10,10);
 pdf.text("Tracking: "+id,10,20);
 pdf.text("Customer: "+d.customerName,10,30);
 pdf.text("Phone: "+d.phone,10,40);
-pdf.text("Destination: "+d.destination,10,50);
-pdf.text("Route: "+d.location+" → "+d.destination,10,60);
+pdf.text("Location: "+d.location,10,50);
+pdf.text("Destination: "+d.destination,10,60);
 pdf.text("Status: "+d.status,10,70);
 pdf.text("ETA: "+d.eta,10,80);
 
