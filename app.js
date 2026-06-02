@@ -26,26 +26,6 @@ const btn=document.getElementById("trackBtn");
 const input=document.getElementById("trackingInput");
 const result=document.getElementById("result");
 
-let map, marker, routeLine;
-
-function initMap(route){
-
-map = L.map("map").setView([20,0],2);
-
-L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png").addTo(map);
-
-routeLine = L.polyline(route,{color:"cyan"}).addTo(map);
-
-marker = L.marker(route[0]).addTo(map);
-}
-
-function moveMarker(route,i){
-if(marker){
-marker.setLatLng(route[i]);
-map.panTo(route[i]);
-}
-}
-
 btn.addEventListener("click",async()=>{
 
 const id=input.value.trim();
@@ -57,28 +37,12 @@ if(!snap.exists()) return;
 const d=snap.data();
 const step=getStep(d.status);
 
-// convert route to map coordinates (demo fallback)
-const routeCoords = [
-[30.0444,31.2357], // Egypt
-[24.7136,46.6753], // Saudi Arabia
-[6.5244,3.3792]    // Nigeria
-];
-
-setTimeout(()=>initMap(routeCoords),300);
-
-let i=0;
-setInterval(()=>{
-if(i<routeCoords.length-1){
-i++;
-moveMarker(routeCoords,i);
-}
-},3000);
-
 result.innerHTML=`
 
 <div class="card">
 
-<h2>📦 ${id}</h2>
+<h2>📦 Diplomatic Courier Service</h2>
+<h3>Tracking ID: ${id}</h3>
 
 <div class="grid">
 
@@ -122,8 +86,6 @@ result.innerHTML=`
 <div class="step ${step>=4?'active':''}">Out for Delivery</div>
 <div class="step ${step>=5?'active':''}">Delivered</div>
 
-<div id="map"></div>
-
 <button class="download" onclick="downloadPDF('${id}')">
 ⬇ Download Receipt
 </button>
@@ -139,7 +101,7 @@ const d=snap.data();
 const { jsPDF } = window.jspdf;
 const pdf=new jsPDF();
 
-pdf.text("SHIPPING RECEIPT",10,10);
+pdf.text("Diplomatic Courier Service Receipt",10,10);
 pdf.text("Tracking: "+id,10,20);
 pdf.text("Customer: "+d.customerName,10,30);
 pdf.text("Phone: "+d.phone,10,40);
