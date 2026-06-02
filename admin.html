@@ -153,19 +153,44 @@ if(!route || route.length < 2) return;
 
 if(map) map.remove();
 
-const coords = route.map(r => geo[r.trim().toLowerCase()]).filter(Boolean);
+/* Convert route names to coordinates */
+const coords = route
+  .map(r => geo[r.trim().toLowerCase()])
+  .filter(Boolean);
 
-if(coords.length < 2) return;
+/* If route is invalid, stop */
+if(coords.length < 2){
+  console.log("Invalid route");
+  return;
+}
 
-map = L.map("map").setView(coords[0], 3);
+/* 🚨 FORCE MAP TO USE WORLD VIEW (NO USER LOCATION EVER) */
+map = L.map("map", {
+  center: [20, 0],   // fixed neutral world center
+  zoom: 2,
+  zoomControl: true,
+  attributionControl: true
+});
 
-L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png").addTo(map);
+/* Load tiles */
+L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+  attribution: "Logistics System"
+}).addTo(map);
 
-polyline = L.polyline(coords,{color:"cyan"}).addTo(map);
+/* Draw route line ONLY */
+polyline = L.polyline(coords, {
+  color: "cyan",
+  weight: 4
+}).addTo(map);
 
+/* Start marker at origin ONLY */
 marker = L.marker(coords[0]).addTo(map);
 
-map.fitBounds(polyline.getBounds());
+/* Fit ONLY route bounds (not user location) */
+map.fitBounds(polyline.getBounds(), {
+  padding: [30, 30]
+});
+
 }
 
 /* ---------------- CREATE (PRODUCTION SAFE) ---------------- */
