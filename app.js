@@ -24,35 +24,38 @@ window.addEventListener("DOMContentLoaded", () => {
     const id = input.value.trim();
 
     if (!id) {
-      result.innerHTML = "❌ Enter tracking number";
+      result.innerHTML = "<p>❌ Please enter tracking number</p>";
       return;
     }
 
     const snap = await getDoc(doc(db, "shipments", id));
 
     if (!snap.exists()) {
-      result.innerHTML = "❌ Shipment not found";
+      result.innerHTML = "<p>❌ Shipment not found</p>";
       return;
     }
 
     const data = snap.data();
 
     result.innerHTML = `
-      <div style="padding:15px;background:#111a2e;color:white;border-radius:10px;text-align:left;max-width:500px;margin:auto;">
+      <div class="card">
 
-        <h2>📦 Tracking: ${id}</h2>
+        <p><b>📦 Tracking:</b> ${id}</p>
 
-        <p>📍 Location: ${data.location}</p>
-        <p>🎯 Destination: ${data.destination}</p>
-        <p>⏰ ETA: ${data.eta}</p>
-        <p>📦 Status: ${data.status}</p>
+        <p><b>📍 Location:</b> ${data.location}</p>
+
+        <p><b>🎯 Destination:</b> ${data.destination}</p>
+
+        <p><b>⏰ ETA:</b> ${data.eta}</p>
+
+        <p class="status">📦 Status: ${data.status}</p>
 
         <hr>
 
-        <h4>🚚 Route Timeline</h4>
+        <p><b>🚚 Route Timeline</b></p>
 
         <ul>
-          ${(data.route || []).map(r => `<li>📍 ${r}</li>`).join("")}
+          ${(data.route || []).map(r => `<li>${r}</li>`).join("")}
         </ul>
 
       </div>
