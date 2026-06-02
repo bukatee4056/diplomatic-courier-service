@@ -26,7 +26,7 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const auth = getAuth(app);
 
-/* 🔐 PROTECT ADMIN PAGE */
+/* 🔐 protect admin page */
 onAuthStateChanged(auth, (user) => {
   if (!user) {
     window.location.href = "login.html";
@@ -39,39 +39,35 @@ const status = document.getElementById("status");
 const location = document.getElementById("location");
 const destination = document.getElementById("destination");
 const eta = document.getElementById("eta");
+const route = document.getElementById("route");
 const msg = document.getElementById("msg");
 
 const tableBody = document.getElementById("tableBody");
 
-/* 📦 SAVE / UPDATE SHIPMENT */
+/* SAVE SHIPMENT */
 document.getElementById("saveBtn").addEventListener("click", async () => {
 
   const id = tracking.value.trim();
 
   if (!id) {
-    msg.innerText = "❌ Enter tracking number";
+    msg.innerText = "Enter tracking number";
     return;
   }
 
-  try {
-    await setDoc(doc(db, "shipments", id), {
-      status: status.value,
-      location: location.value,
-      destination: destination.value,
-      eta: eta.value,
-      updatedAt: Date.now()
-    });
+  await setDoc(doc(db, "shipments", id), {
+    status: status.value,
+    location: location.value,
+    destination: destination.value,
+    eta: eta.value,
+    route: route.value.split(",").map(r => r.trim()),
+    updatedAt: Date.now()
+  });
 
-    msg.innerText = "✅ Shipment saved successfully!";
-    loadData();
-
-  } catch (error) {
-    console.error(error);
-    msg.innerText = "❌ Error saving shipment";
-  }
+  msg.innerText = "Saved successfully";
+  loadData();
 });
 
-/* 📡 LOAD ALL SHIPMENTS */
+/* LOAD ALL SHIPMENTS */
 async function loadData() {
 
   tableBody.innerHTML = "";
@@ -84,26 +80,24 @@ async function loadData() {
     tableBody.innerHTML += `
       <tr>
         <td>${d.id}</td>
-        <td>${data.status || ""}</td>
-        <td>${data.location || ""}</td>
-        <td>${data.destination || ""}</td>
-        <td>${data.eta || ""}</td>
+        <td>${data.status}</td>
+        <td>${data.location}</td>
+        <td>${data.destination}</td>
+        <td>${data.eta}</td>
       </tr>
     `;
   });
 }
 
-/* 🔍 SEARCH SHIPMENT */
+/* SEARCH SHIPMENT */
 document.getElementById("searchBtn").addEventListener("click", async () => {
 
   const id = document.getElementById("search").value.trim();
 
-  if (!id) return;
-
   const snap = await getDoc(doc(db, "shipments", id));
 
   if (!snap.exists()) {
-    msg.innerText = "❌ Not found";
+    msg.innerText = "Not found";
     return;
   }
 
@@ -120,5 +114,4 @@ document.getElementById("searchBtn").addEventListener("click", async () => {
   `;
 });
 
-/* INITIAL LOAD */
 loadData();
