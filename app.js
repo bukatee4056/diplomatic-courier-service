@@ -31,10 +31,11 @@ window.addEventListener("DOMContentLoaded", () => {
     const docRef = doc(db, "shipments", trackingNumber);
     const docSnap = await getDoc(docRef);
 
-    if (docSnap.exists()) {
-      const data = docSnap.data();
+const data = docSnap.data();
 
-      result.innerHTML = `
+console.log("RAW FIREBASE DATA:", data);
+
+result.innerHTML = JSON.stringify(data);
         <h3>Status: ${data.Status}</h3>
         <p><b>Location:</b> ${data.Location}</p>
         <p><b>Destination:</b> ${data.Destination}</p>
