@@ -2,64 +2,63 @@
 <html>
 <head>
   <meta charset="UTF-8">
-  <title>Admin Dashboard - Courier System</title>
+  <title>Admin Dashboard</title>
 
   <style>
-    body {
-      font-family: Arial;
-      background: #f4f4f4;
-      padding: 20px;
+    body { font-family: Arial; background:#f4f4f4; padding:20px; }
+    .box { background:white; padding:20px; border-radius:10px; margin-bottom:20px; }
+    input { padding:10px; margin:5px; width:100%; }
+    button { padding:10px; margin:5px; cursor:pointer; }
+
+    table {
+      width:100%;
+      border-collapse: collapse;
+      background:white;
     }
 
-    .box {
-      background: white;
-      padding: 20px;
-      max-width: 500px;
-      margin: auto;
-      border-radius: 10px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    th, td {
+      border:1px solid #ddd;
+      padding:10px;
+      text-align:left;
     }
 
-    input {
-      width: 100%;
-      padding: 10px;
-      margin: 8px 0;
-    }
-
-    button {
-      width: 100%;
-      padding: 12px;
-      background: #0b1f3a;
-      color: white;
-      border: none;
-      cursor: pointer;
-    }
-
-    button:hover {
-      background: #163a66;
-    }
-
-    #msg {
-      margin-top: 10px;
-      font-weight: bold;
-    }
+    th { background:#0b1f3a; color:white; }
+    .btn { margin-right:5px; }
   </style>
 </head>
 
 <body>
 
-<div class="box">
-  <h2>📦 Create Shipment</h2>
+<h2>📦 DHL-Style Admin Dashboard</h2>
 
-  <input id="tracking" placeholder="Tracking Number (e.g. DCS123456)">
-  <input id="status" placeholder="Status (In TRANSIT)">
-  <input id="location" placeholder="Location (CAIRO)">
-  <input id="destination" placeholder="Destination (Yemen)">
-  <input id="eta" placeholder="ETA (June 29, 2026)">
+<div class="box">
+  <h3>Create / Update Shipment</h3>
+
+  <input id="tracking" placeholder="Tracking Number">
+  <input id="status" placeholder="Status">
+  <input id="location" placeholder="Location">
+  <input id="destination" placeholder="Destination">
+  <input id="eta" placeholder="ETA">
 
   <button id="saveBtn">Save Shipment</button>
+  <p id="msg"></p>
+</div>
 
-  <div id="msg"></div>
+<div class="box">
+  <h3>All Shipments</h3>
+  <table>
+    <thead>
+      <tr>
+        <th>Tracking</th>
+        <th>Status</th>
+        <th>Location</th>
+        <th>Destination</th>
+        <th>ETA</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody id="tableBody"></tbody>
+  </table>
 </div>
 
 <script type="module" src="admin.js"></script>
