@@ -37,10 +37,13 @@ window.addEventListener("DOMContentLoaded", () => {
         return;
       }
 
-      const data = docSnap.data();
+const data = docSnap.data();
 
-      result.innerHTML = `
-        <h3>Status: ${data.Status}</h3>
+console.log("FULL FIREBASE DATA:", data);
+
+result.innerHTML = `
+<pre>${JSON.stringify(data, null, 2)}</pre>
+`;
         <p><b>Location:</b> ${data.Location}</p>
         <p><b>Destination:</b> ${data.Destination}</p>
         <p><b>ETA:</b> ${data.ETA}</p>
