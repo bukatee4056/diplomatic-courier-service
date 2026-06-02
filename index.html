@@ -30,7 +30,7 @@ body{
   text-align:center;
 }
 
-input{
+input, button{
   width:100%;
   padding:12px;
   margin-top:10px;
@@ -39,12 +39,7 @@ input{
 }
 
 button{
-  width:100%;
-  padding:12px;
-  margin-top:10px;
   background:#f5c542;
-  border:none;
-  border-radius:8px;
   font-weight:bold;
   cursor:pointer;
 }
@@ -68,23 +63,16 @@ button{
   border-radius:10px;
 }
 
-.label{
-  font-size:12px;
-  color:#9aa4b2;
-}
-
-.value{
-  font-size:14px;
-  margin-top:3px;
-}
+.label{font-size:12px;color:#9aa4b2}
+.value{font-size:14px;margin-top:3px}
 
 .step{
   padding:10px;
-  margin-top:6px;
-  border-left:4px solid #334155;
+  margin:5px 0;
   background:#0b1220;
-  opacity:0.4;
+  border-left:4px solid #444;
   border-radius:6px;
+  opacity:0.5;
 }
 
 .step.active{
@@ -109,7 +97,7 @@ button{
 <div class="container">
 
 <div class="header">
-<h2>📦 Diplomatic Courier Service Tracking</h2>
+<h2>📦 Diplomatic Courier Service</h2>
 
 <input id="trackingInput" placeholder="Enter Tracking Number">
 <button id="trackBtn">Track Package</button>
