@@ -28,10 +28,15 @@ const location = document.getElementById("location");
 const destination = document.getElementById("destination");
 const eta = document.getElementById("eta");
 const shippedDate = document.getElementById("shippedDate");
+
+const customerName = document.getElementById("customerName");
+const phone = document.getElementById("phone");
+const address = document.getElementById("address");
+
 const msg = document.getElementById("msg");
 const list = document.getElementById("list");
 
-// SAVE / UPDATE SHIPMENT
+// SAVE / UPDATE
 document.getElementById("saveBtn").addEventListener("click", async () => {
 
   const id = tracking.value.trim();
@@ -43,11 +48,16 @@ document.getElementById("saveBtn").addEventListener("click", async () => {
     location: location.value,
     destination: destination.value,
     eta: eta.value,
-    shippedDate: shippedDate.value,
+    shippedDate: shippedDate.value || "",
+
+    customerName: customerName.value || "",
+    phone: phone.value || "",
+    address: address.value || "",
+
     updatedAt: Date.now()
   });
 
-  msg.innerText = "✅ Saved successfully";
+  msg.innerText = "✅ Saved successfully!";
   loadShipments();
 });
 
@@ -65,25 +75,25 @@ async function loadShipments() {
     html += `
       <div class="card">
 
-        <b>📦 ${d.id}</b><br>
+        <b>📦 ${d.id}</b><br><br>
+
+        👤 ${data.customerName || "N/A"}<br>
+        📞 ${data.phone || "N/A"}<br>
+        🏠 ${data.address || "N/A"}<br><br>
+
         📍 ${data.location} → ${data.destination}<br>
         📦 ${data.status}<br>
         📅 ${data.shippedDate || "N/A"}<br>
-        ⏰ ${data.eta}
+        ⏰ ${data.eta}<br><br>
 
-        <div class="row-btn">
-
-          <button class="edit" onclick="editShipment('${d.id}')">Edit</button>
-
-          <button class="delete" onclick="deleteShipment('${d.id}')">Delete</button>
-
-        </div>
+        <button onclick="editShipment('${d.id}')">Edit</button>
+        <button onclick="deleteShipment('${d.id}')">Delete</button>
 
       </div>
     `;
   });
 
-  list.innerHTML = html || "No shipments";
+  list.innerHTML = html || "No shipments found";
 }
 
 // DELETE
@@ -92,11 +102,10 @@ window.deleteShipment = async (id) => {
   loadShipments();
 };
 
-// EDIT (LOAD INTO FORM)
+// EDIT
 window.editShipment = async (id) => {
 
   const snap = await getDoc(doc(db, "shipments", id));
-
   if (!snap.exists()) return;
 
   const d = snap.data();
@@ -108,34 +117,10 @@ window.editShipment = async (id) => {
   eta.value = d.eta;
   shippedDate.value = d.shippedDate || "";
 
+  customerName.value = d.customerName || "";
+  phone.value = d.phone || "";
+  address.value = d.address || "";
 };
-
-// SEARCH FILTER
-document.getElementById("search").addEventListener("input", async (e) => {
-
-  const value = e.target.value.toLowerCase();
-
-  const snap = await getDocs(collection(db, "shipments"));
-
-  let html = "";
-
-  snap.forEach(d => {
-
-    if (!d.id.toLowerCase().includes(value)) return;
-
-    const data = d.data();
-
-    html += `
-      <div class="card">
-        <b>📦 ${d.id}</b><br>
-        📍 ${data.location} → ${data.destination}<br>
-        📦 ${data.status}<br>
-      </div>
-    `;
-  });
-
-  list.innerHTML = html;
-});
 
 // INIT
 loadShipments();
