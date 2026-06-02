@@ -19,12 +19,17 @@ window.addEventListener("DOMContentLoaded", () => {
   const input = document.querySelector("input");
   const result = document.getElementById("result");
 
+  if (!button || !input || !result) {
+    console.error("Missing HTML elements");
+    return;
+  }
+
   button.addEventListener("click", async () => {
 
     const trackingNumber = input.value.trim();
 
     if (!trackingNumber) {
-      result.innerHTML = "Enter tracking number";
+      result.innerHTML = "Please enter a tracking number";
       return;
     }
 
@@ -37,20 +42,19 @@ window.addEventListener("DOMContentLoaded", () => {
         return;
       }
 
-const data = docSnap.data();
+      const data = docSnap.data();
 
-console.log("FULL FIREBASE DATA:", data);
+      console.log("FULL FIREBASE DATA:", data);
 
-result.innerHTML = `
-<pre>${JSON.stringify(data, null, 2)}</pre>
-`;
+      result.innerHTML = `
+        <h3>Status: ${data.Status}</h3>
         <p><b>Location:</b> ${data.Location}</p>
         <p><b>Destination:</b> ${data.Destination}</p>
         <p><b>ETA:</b> ${data.ETA}</p>
       `;
 
     } catch (error) {
-      console.log("Firebase error:", error);
+      console.error("Firebase error:", error);
       result.innerHTML = "Error loading shipment data";
     }
 
