@@ -31,47 +31,32 @@ window.addEventListener("DOMContentLoaded", () => {
     const snap = await getDoc(doc(db, "shipments", id));
 
     if (!snap.exists()) {
-      result.innerHTML = `
-        <div style="padding:15px;background:#ffeded;color:#c00;border-radius:10px;">
-          ❌ Tracking number not found
-        </div>
-      `;
+      result.innerHTML = "❌ Shipment not found";
       return;
     }
 
     const data = snap.data();
 
     result.innerHTML = `
-      <div style="max-width:500px;margin:auto;padding:20px;border-radius:12px;background:#0b1220;color:white;font-family:Arial;">
+      <div style="padding:15px;background:#111a2e;color:white;border-radius:10px;text-align:left;max-width:500px;margin:auto;">
 
-        <h2>📦 Shipment Tracking</h2>
+        <h2>📦 Tracking: ${id}</h2>
 
-        <div style="padding:10px;background:#111a2e;border-radius:10px;margin-top:10px;">
-          <h3>📦 ${id}</h3>
-          <p>📍 <b>Location:</b> ${data.location}</p>
-          <p>🎯 <b>Destination:</b> ${data.destination}</p>
-          <p>⏰ <b>ETA:</b> ${data.eta}</p>
-        </div>
+        <p>📍 Location: ${data.location}</p>
+        <p>🎯 Destination: ${data.destination}</p>
+        <p>⏰ ETA: ${data.eta}</p>
+        <p>📦 Status: ${data.status}</p>
 
-        <div style="margin-top:15px;">
-          <h3>🚚 Route Timeline</h3>
-          <ul style="list-style:none;padding:0;">
-            ${(data.route || []).map((r, i) => `
-              <li style="padding:8px;margin:5px 0;background:#111a2e;border-radius:8px;">
-                ${i === (data.route?.length - 1) ? "📍 CURRENT → " : "📦 "} ${r}
-              </li>
-            `).join("")}
-          </ul>
-        </div>
+        <hr>
 
-        <div style="margin-top:15px;">
-          <h3>📊 Status</h3>
-          <div style="padding:10px;border-radius:10px;background:#1b2a4a;">
-            ${data.status}
-          </div>
-        </div>
+        <h4>🚚 Route Timeline</h4>
+
+        <ul>
+          ${(data.route || []).map(r => `<li>📍 ${r}</li>`).join("")}
+        </ul>
 
       </div>
     `;
   });
+
 });
