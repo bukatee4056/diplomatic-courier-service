@@ -40,19 +40,18 @@ window.addEventListener("DOMContentLoaded", () => {
 
       const data = docSnap.data();
 
-      console.log("RAW FIREBASE DATA:", data);
-
+      // 📦 DISPLAY RESULT
       result.innerHTML = `
-        <div style="padding:10px; border:1px solid #ddd; border-radius:8px; font-family: Arial;">
-          <h3>📦 Status: ${data.Status || "N/A"}</h3>
-          <p>📍 <b>Location:</b> ${data.Location || "N/A"}</p>
-          <p>🎯 <b>Destination:</b> ${data.Destination || "N/A"}</p>
-          <p>⏰ <b>ETA:</b> ${data.ETA || "N/A"}</p>
+        <div style="padding:10px; border:1px solid #ddd; border-radius:8px;">
+          <h3>📦 Status: ${data.Status}</h3>
+          <p><b>Location:</b> ${data.Location}</p>
+          <p><b>Destination:</b> ${data.Destination}</p>
+          <p><b>ETA:</b> ${data.ETA}</p>
         </div>
       `;
 
     } catch (error) {
-      console.error("Firebase error:", error);
+      console.error(error);
       result.innerHTML = "Error loading shipment data";
     }
 
