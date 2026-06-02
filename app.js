@@ -1,50 +1,17 @@
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-
-const firebaseConfig = {
-  apiKey: "AIzaSyAwjcKxnViESMXyCzhML2sZPbA_HBzytMg",
-  authDomain: "diplomatic-courier-service.firebaseapp.com",
-  projectId: "diplomatic-courier-service",
-  storageBucket: "diplomatic-courier-service.firebasestorage.app",
-  messagingSenderId: "601909831194",
-  appId: "1:601909831194:web:d1d2edf11f4aa5871f53a3"
-};
-
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-
-window.addEventListener("DOMContentLoaded", () => {
+window.onload = function () {
 
   const button = document.querySelector("button");
   const input = document.querySelector("input");
   const result = document.getElementById("result");
 
-  button.addEventListener("click", async () => {
+  alert("JS LOADED");
 
-    const trackingNumber = input.value.trim();
+  button.onclick = function () {
 
-    if (!trackingNumber) {
-      result.innerHTML = "Please enter tracking number";
-      return;
-    }
+    alert("BUTTON CLICKED");
 
-    const docRef = doc(db, "shipments", trackingNumber);
-    const docSnap = await getDoc(docRef);
+    result.innerHTML = "Button works. Input: " + input.value;
 
-const data = docSnap.data();
+  };
 
-console.log("RAW FIREBASE DATA:", data);
-
-result.innerHTML = JSON.stringify(data);
-        <h3>Status: ${data.Status}</h3>
-        <p><b>Location:</b> ${data.Location}</p>
-        <p><b>Destination:</b> ${data.Destination}</p>
-        <p><b>ETA:</b> ${data.ETA}</p>
-      `;
-    } else {
-      result.innerHTML = "Tracking number not found";
-    }
-
-  });
-
-});
+};
