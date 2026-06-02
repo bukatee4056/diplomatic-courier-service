@@ -13,6 +13,17 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
+function getStep(status){
+  const map = {
+    "Order Confirmed": 1,
+    "Package Picked Up": 2,
+    "In Transit": 3,
+    "Out for Delivery": 4,
+    "Delivered": 5
+  };
+  return map[status] || 0;
+}
+
 window.addEventListener("DOMContentLoaded", () => {
 
   const btn = document.getElementById("trackBtn");
@@ -23,51 +34,60 @@ window.addEventListener("DOMContentLoaded", () => {
 
     const id = input.value.trim();
 
-    if (!id) {
-      result.innerHTML = "<p>❌ Enter tracking number</p>";
+    if(!id){
+      result.innerHTML = "<p>Enter tracking ID</p>";
       return;
     }
 
-    const snap = await getDoc(doc(db, "shipments", id));
+    const snap = await getDoc(doc(db,"shipments",id));
 
-    if (!snap.exists()) {
-      result.innerHTML = "<p>❌ Shipment not found</p>";
+    if(!snap.exists()){
+      result.innerHTML = "<p>Shipment not found</p>";
       return;
     }
 
-    const data = snap.data();
+    const d = snap.data();
+    const step = getStep(d.status);
 
     result.innerHTML = `
       <div class="card">
 
-        <div class="title">📦 Tracking ID: ${id}</div>
+        <h2>📦 ${id}</h2>
 
         <div class="grid">
-          <div><b>👤 Customer</b><br>${data.customerName || "N/A"}</div>
-          <div><b>📞 Phone</b><br>${data.phone || "N/A"}</div>
+          <div>
+            <div class="label">Customer</div>
+            <div class="value">${d.customerName || "N/A"}</div>
+          </div>
+
+          <div>
+            <div class="label">Phone</div>
+            <div class="value">${d.phone || "N/A"}</div>
+          </div>
+
+          <div>
+            <div class="label">Route</div>
+            <div class="value">${d.location} → ${d.destination}</div>
+          </div>
+
+          <div>
+            <div class="label">Status</div>
+            <div class="value">${d.status}</div>
+          </div>
         </div>
 
-        <br>
-
-        <div><b>🏠 Address:</b> ${data.address || "N/A"}</div>
-        <div><b>📍 Route:</b> ${data.location} → ${data.destination}</div>
-
-        <div class="status">
-          <b>📦 Status:</b> ${data.status}
+        <div class="section">
+          <b>📅 Shipped:</b> ${d.shippedDate || "N/A"} <br>
+          <b>⏰ ETA:</b> ${d.eta || "N/A"}
         </div>
 
-        <div class="status">
-          <b>📅 Shipped Date:</b> ${data.shippedDate || "N/A"}<br>
-          <b>⏰ ETA:</b> ${data.eta || "N/A"}
-        </div>
+        <h3>🚚 Tracking Timeline</h3>
 
-        <h3>🚚 Tracking Progress</h3>
-
-        <div class="step">✔ Order Confirmed</div>
-        <div class="step">✔ Package Picked Up</div>
-        <div class="step">🚚 In Transit</div>
-        <div class="step">📍 Out for Delivery</div>
-        <div class="step">🏁 Delivered</div>
+        <div class="step ${step>=1?'active':''}">✔ Order Confirmed</div>
+        <div class="step ${step>=2?'active':''}">📦 Package Picked Up</div>
+        <div class="step ${step>=3?'active':''}">🚚 In Transit</div>
+        <div class="step ${step>=4?'active':''}">📍 Out for Delivery</div>
+        <div class="step ${step>=5?'active':''}">🏁 Delivered</div>
 
       </div>
     `;
