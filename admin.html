@@ -6,106 +6,64 @@
 
 <style>
 body{
-  margin:0;
   font-family:Arial;
   background:#0b1220;
   color:white;
+  margin:0;
 }
 
-.header{
-  padding:20px;
-  background:#111a2e;
-  text-align:center;
-}
-
-.grid{
-  display:grid;
-  grid-template-columns:repeat(4,1fr);
-  gap:10px;
+.container{
+  max-width:1000px;
+  margin:auto;
   padding:20px;
 }
 
 .card{
   background:#111a2e;
-  padding:20px;
+  padding:15px;
+  margin:10px 0;
   border-radius:12px;
-  text-align:center;
 }
 
-.form{
-  display:grid;
-  grid-template-columns:repeat(3,1fr);
-  gap:10px;
-  padding:20px;
-}
-
-input{
+input, button{
+  width:100%;
   padding:10px;
+  margin-top:8px;
   border:none;
-  border-radius:6px;
+  border-radius:8px;
 }
 
 button{
-  grid-column:span 3;
-  padding:12px;
-  background:#f5c542;
-  border:none;
-  border-radius:8px;
-  font-weight:bold;
   cursor:pointer;
+  font-weight:bold;
 }
 
-table{
-  width:100%;
-  border-collapse:collapse;
-  margin-top:20px;
+.edit{background:#22c55e;color:white}
+.delete{background:#ef4444;color:white}
+.update{background:#3b82f6;color:white}
+
+.grid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:10px;
 }
 
-th,td{
-  padding:10px;
-  border-bottom:1px solid #1f2937;
+.small{
+  font-size:12px;
+  color:#9aa4b2;
 }
 </style>
 </head>
 
 <body>
 
-<div class="header">
-<h2>📊 Logistics Control Center</h2>
-</div>
+<div class="container">
 
-<div class="grid">
-<div class="card"><h3 id="total">0</h3><p>Total</p></div>
-<div class="card"><h3 id="transit">0</h3><p>In Transit</p></div>
-<div class="card"><h3 id="delivered">0</h3><p>Delivered</p></div>
-<div class="card"><h3 id="pending">0</h3><p>Pending</p></div>
-</div>
+<h2>📦 Logistics Control Center</h2>
 
-<div class="form">
-
-<input id="tracking" placeholder="Tracking ID">
-<input id="customerName" placeholder="Customer Name">
-<input id="phone" placeholder="Phone">
-<input id="address" placeholder="Address">
-<input id="eta" placeholder="ETA">
-<input id="shippedDate" placeholder="Shipped Date">
-
-<button id="saveBtn">Save Shipment</button>
+<div id="list"></div>
 
 </div>
-
-<table>
-<thead>
-<tr>
-<th>ID</th>
-<th>Customer</th>
-<th>Status</th>
-<th>Progress</th>
-</tr>
-</thead>
-
-<tbody id="list"></tbody>
-</table>
 
 <script type="module" src="admin.js"></script>
 
