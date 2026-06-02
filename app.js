@@ -39,8 +39,7 @@ if (docSnap.exists()) {
     <h3>Status: ${data.Status}</h3>
     <p><strong>Location:</strong> ${data.Location}</p>
     <p><strong>Destination:</strong> ${data.Destination}</p>
-    <p><strong>ETA:</strong> ${data.ETA}</p>
-  `;
+    <p><strong>ETA:</strong> ${data.ETA}</p>;
 } else {
   result.innerHTML = "Tracking number not found.";
 }
