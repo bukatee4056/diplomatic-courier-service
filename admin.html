@@ -13,7 +13,7 @@
     }
 
     .container {
-      max-width: 1000px;
+      max-width: 1100px;
       margin: auto;
       background: white;
       padding: 20px;
@@ -22,14 +22,13 @@
 
     h2 {
       text-align: center;
-      margin-bottom: 20px;
     }
 
     .form {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
       gap: 10px;
-      margin-bottom: 20px;
+      margin-bottom: 15px;
     }
 
     input {
@@ -57,8 +56,7 @@
     th, td {
       border: 1px solid #ddd;
       padding: 10px;
-      text-align: left;
-      font-size: 14px;
+      font-size: 13px;
     }
 
     th {
@@ -68,31 +66,35 @@
 
     .actions button {
       padding: 5px 8px;
-      margin-right: 5px;
       font-size: 12px;
+      margin-right: 5px;
     }
 
-    .delete {
-      background: red;
-      color: white;
-      border: none;
-      border-radius: 4px;
-    }
+    .delete { background: red; color: white; border: none; }
+    .edit { background: green; color: white; border: none; }
+    .pdf { background: black; color: white; border: none; }
 
-    .edit {
-      background: green;
-      color: white;
-      border: none;
-      border-radius: 4px;
+    #map {
+      height: 300px;
+      margin-top: 20px;
+      border-radius: 10px;
     }
   </style>
+
+  <!-- MAP -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css">
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+  <!-- PDF -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
 </head>
 
 <body>
 
 <div class="container">
 
-  <h2>📦 Admin Dashboard</h2>
+  <h2>📦 Logistics Admin Dashboard</h2>
 
   <div class="form">
 
@@ -100,8 +102,8 @@
     <input id="customerName" placeholder="Customer Name">
     <input id="phone" placeholder="Phone Number">
 
-    <input id="address" placeholder="House Address">
-    <input id="location" placeholder="Current Location">
+    <input id="address" placeholder="Address">
+    <input id="location" placeholder="Location">
     <input id="destination" placeholder="Destination">
 
     <input id="status" placeholder="Status">
@@ -118,16 +120,17 @@
         <th>Tracking</th>
         <th>Customer</th>
         <th>Phone</th>
-        <th>Location</th>
-        <th>Destination</th>
         <th>Status</th>
-        <th>ETA</th>
+        <th>Route</th>
         <th>Actions</th>
       </tr>
     </thead>
 
     <tbody id="list"></tbody>
   </table>
+
+  <h3>📍 Live Route Map</h3>
+  <div id="map"></div>
 
 </div>
 
