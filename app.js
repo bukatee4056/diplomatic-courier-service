@@ -24,33 +24,50 @@ window.addEventListener("DOMContentLoaded", () => {
     const id = input.value.trim();
 
     if (!id) {
-      result.innerHTML = "❌ Enter tracking number";
+      result.innerHTML = "<p>❌ Enter tracking number</p>";
       return;
     }
 
     const snap = await getDoc(doc(db, "shipments", id));
 
     if (!snap.exists()) {
-      result.innerHTML = "❌ Shipment not found";
+      result.innerHTML = "<p>❌ Shipment not found</p>";
       return;
     }
 
     const data = snap.data();
 
     result.innerHTML = `
-      <div style="text-align:left;border:1px solid #ddd;padding:10px;border-radius:8px">
+      <div class="card">
 
-        <h3>📦 ${id}</h3>
+        <div class="title">📦 Tracking ID: ${id}</div>
 
-        👤 Customer: ${data.customerName || "N/A"}<br>
-        📞 Phone: ${data.phone || "N/A"}<br>
-        🏠 Address: ${data.address || "N/A"}<br><br>
+        <div class="grid">
+          <div><b>👤 Customer</b><br>${data.customerName || "N/A"}</div>
+          <div><b>📞 Phone</b><br>${data.phone || "N/A"}</div>
+        </div>
 
-        📍 ${data.location}<br>
-        🎯 ${data.destination}<br>
-        📦 ${data.status}<br>
-        📅 Shipped: ${data.shippedDate || "N/A"}<br>
-        ⏰ ETA: ${data.eta}
+        <br>
+
+        <div><b>🏠 Address:</b> ${data.address || "N/A"}</div>
+        <div><b>📍 Route:</b> ${data.location} → ${data.destination}</div>
+
+        <div class="status">
+          <b>📦 Status:</b> ${data.status}
+        </div>
+
+        <div class="status">
+          <b>📅 Shipped Date:</b> ${data.shippedDate || "N/A"}<br>
+          <b>⏰ ETA:</b> ${data.eta || "N/A"}
+        </div>
+
+        <h3>🚚 Tracking Progress</h3>
+
+        <div class="step">✔ Order Confirmed</div>
+        <div class="step">✔ Package Picked Up</div>
+        <div class="step">🚚 In Transit</div>
+        <div class="step">📍 Out for Delivery</div>
+        <div class="step">🏁 Delivered</div>
 
       </div>
     `;
