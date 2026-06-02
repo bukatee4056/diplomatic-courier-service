@@ -2,18 +2,18 @@
 <html>
 <head>
   <meta charset="UTF-8">
-  <title>Admin Dashboard - Create Shipment</title>
+  <title>Admin Dashboard</title>
 
   <style>
     body {
       font-family: Arial;
       background: #f4f6fb;
-      padding: 30px;
+      padding: 20px;
       text-align: center;
     }
 
     .container {
-      max-width: 500px;
+      max-width: 600px;
       margin: auto;
       background: white;
       padding: 20px;
@@ -21,18 +21,18 @@
       box-shadow: 0 2px 10px rgba(0,0,0,0.1);
     }
 
-    input {
+    input, select {
       width: 100%;
-      padding: 12px;
-      margin-top: 10px;
+      padding: 10px;
+      margin-top: 8px;
       border: 1px solid #ccc;
       border-radius: 6px;
     }
 
     button {
       width: 100%;
-      padding: 12px;
-      margin-top: 15px;
+      padding: 10px;
+      margin-top: 10px;
       background: #0b3d91;
       color: white;
       border: none;
@@ -40,44 +40,69 @@
       cursor: pointer;
     }
 
-    button:hover {
-      background: #092c6a;
+    .card {
+      border: 1px solid #ddd;
+      padding: 10px;
+      margin-top: 10px;
+      border-radius: 8px;
+      text-align: left;
     }
 
-    #msg {
-      margin-top: 15px;
-      font-weight: bold;
+    .row-btn {
+      display: flex;
+      gap: 5px;
+      margin-top: 5px;
     }
+
+    .row-btn button {
+      width: 50%;
+      font-size: 12px;
+    }
+
+    .delete {
+      background: #c0392b;
+    }
+
+    .edit {
+      background: #27ae60;
+    }
+
   </style>
-
 </head>
 
 <body>
 
-  <div class="container">
+<div class="container">
 
-    <h2>👨‍💼 Admin Dashboard</h2>
-    <p>Create Shipment Record</p>
+  <h2>👨‍💼 Admin Dashboard</h2>
 
-    <input id="tracking" placeholder="Tracking Number (e.g DCS001)">
+  <input id="tracking" placeholder="Tracking Number">
 
-    <input id="status" placeholder="Status (e.g In Transit)">
+  <input id="status" placeholder="Status">
 
-    <input id="location" placeholder="Current Location (e.g Cairo, Egypt)">
+  <input id="location" placeholder="Location">
 
-    <input id="destination" placeholder="Destination (e.g Nigeria)">
+  <input id="destination" placeholder="Destination">
 
-    <input id="eta" placeholder="ETA (e.g June 29, 2026)">
+  <input id="eta" placeholder="ETA">
 
-    <input id="shippedDate" placeholder="Shipped Date (e.g June 2, 2026)">
+  <input id="shippedDate" placeholder="Shipped Date">
 
-    <button id="saveBtn">Save Shipment</button>
+  <button id="saveBtn">Save Shipment</button>
 
-    <div id="msg"></div>
+  <p id="msg"></p>
 
-  </div>
+  <hr>
 
-  <script type="module" src="admin.js"></script>
+  <h3>🔎 Search</h3>
+  <input id="search" placeholder="Search tracking number">
+
+  <h3>📦 Shipments</h3>
+  <div id="list">Loading...</div>
+
+</div>
+
+<script type="module" src="admin.js"></script>
 
 </body>
 </html>
